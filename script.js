@@ -236,6 +236,79 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // Append Message to Chat Window
+        function appendMessage(text, sender) {
+            const div = document.createElement('div');
+            div.classList.add('chat-msg', sender);
+            // Auto-link URLs
+            div.innerHTML = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color: inherit; text-decoration: underline;">$1</a>');
+            chatbotBody.appendChild(div);
+            chatbotBody.scrollTop = chatbotBody.scrollHeight;
+        }
+
+        // Send Message
+        async function sendMessage() {
+            const text = chatbotInput.value.trim();
+            if (!text) return;
+
+            // 1. Show User Message
+            appendMessage(text, 'user');
+            chatbotInput.value = '';
+
+            // 2. Show Loading Indicator
+            const loadingDiv = document.createElement('div');
+            loadingDiv.classList.add('chat-msg', 'bot');
+            loadingDiv.textContent = '...';
+            chatbotBody.appendChild(loadingDiv);
+            chatbotBody.scrollTop = chatbotBody.scrollHeight;
+
+            try {
+                // 3. Prepare Prompt & Update State
+                const systemInstruction = getSystemPrompt(chatState, text);
+
+                // Update state for the next turn
+                chatState = advanceState(chatState, text);
+
+                // 4. Call API
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        messages: [
+                            { role: 'system', content: systemInstruction },
+                            { role: 'user', content: text }
+                        ]
+                    })
+                });
+
+                if (!response.ok) throw new Error('API Request Failed');
+
+                const data = await response.json();
+
+                // Remove Loading
+                if (loadingDiv.parentNode) chatbotBody.removeChild(loadingDiv);
+
+                // 5. Show Bot Response
+                if (data.choices && data.choices[0] && data.choices[0].message) {
+                    appendMessage(data.choices[0].message.content, 'bot');
+                } else {
+                    // Fallback if response structure is unexpected
+                    const fallback = getLocalFallbackResponse(chatState, text);
+                    appendMessage(fallback, 'bot');
+                }
+
+            } catch (error) {
+                console.error('Chatbot Error:', error);
+
+                // Remove Loading
+                if (loadingDiv.parentNode) chatbotBody.removeChild(loadingDiv);
+
+                // Use Local Fallback
+                const fallback = getLocalFallbackResponse(chatState, text);
+                appendMessage(fallback, 'bot');
+            }
+        }
+
         if (chatbotSend && chatbotInput) {
             chatbotSend.addEventListener('click', sendMessage);
             chatbotInput.addEventListener('keypress', (e) => {
