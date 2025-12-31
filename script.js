@@ -56,11 +56,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (chatbotToggle && chatbotWindow && chatbotClose) {
         let hasStarted = false;
 
+        // Customize the opening message here (Fast Load)
+        const OPENING_MESSAGE = "Hi, I’m The Social Tiger’s AI Assistant. How can I assist you today?";
+
         chatbotToggle.addEventListener('click', () => {
             chatbotWindow.classList.toggle('hidden');
             if (!chatbotWindow.classList.contains('hidden') && !hasStarted) {
                 hasStarted = true;
-                sendMessage('Hello', true); // Auto-start trigger
+                // Directly append the opening message without API call
+                appendMessage(OPENING_MESSAGE, 'bot');
             }
         });
 
@@ -78,7 +82,15 @@ document.addEventListener('DOMContentLoaded', () => {
         let chatState = 'GREETING'; // Initial state
         let context = {}; // Store user responses
 
-        const SYSTEM_IDENTITY = `You are a consultative AI chatbot for Social Tiger Marketing. Your role is to qualify website visitors thoughtfully, provide genuine marketing value when asked, and build trust before suggesting a call. Never feel pushy or sales-driven. Ask one question at a time. Wait for the user’s response before continuing. Briefly acknowledge each response. Mirror one short phrase the user used. Add one short insight sentence max between questions. Do not repeat questions. do not force a booking.`;
+        const SYSTEM_IDENTITY = `You are The Social Tiger’s AI Assistant. Your goal is to understand the visitor’s marketing situation, provide helpful insights, and ONLY invite them to a short call if it feels appropriate.
+        
+        IMPORTANT BEHAVIOR:
+        - You are NOT a form or survey. Respond naturally.
+        - Never blindly ask the next question.
+        - Only ask ONE question at a time.
+        - If the user asks something, answer it fully before asking anything else.
+        - Always acknowledge the user’s response before continuing.
+        - Do NOT repeat the opening message.`;
 
         // Define the Qualification Flow
         function getSystemPrompt(state, userText) {
@@ -88,84 +100,78 @@ document.addEventListener('DOMContentLoaded', () => {
             const lowerText = userText.toLowerCase();
             if (lowerText.includes('what do you do') || lowerText.includes('how can you help') || lowerText.includes('services')) {
                 return prompt + `The user has asked about services. IGNORE the current qualification flow for a moment.
-                 Provide a value-first explanation of ONE relevant service (Organic LinkedIn Growth, Warm & Cold Email Marketing, or Website Build/AI Chatbot).
-                 Do NOT list all of them. Pick the most relevant one or a general summary.
-                 After looking at their input, if they seem unsure, ask if they'd like to continue with the previous topic.
-                 Keep it brief.`;
+                 Explain clearly and simply that Social Tiger helps in 3 main areas:
+                 1. LinkedIn organic growth (ghostwritten content, strategic commenting, inbound conversations).
+                 2. Warm and cold email marketing (value-first outreach to increase Revenue).
+                 3. Website builds or upgrades with AI chatbot integration (to handle inbound inquiries).
+                 
+                 Explain BENEFITS, not features.
+                 After explaining, ask if they would like to continue talking about their marketing goals.`;
             }
 
             switch (state) {
                 case 'GREETING':
-                    return prompt + `The user has responded to your greeting. 
-                    Your goal is Step 1 - Current State.
-                    Ask: "What are you currently using for your marketing?"
-                    Acknowledge their greeting briefly first.`;
+                    return prompt + `The user has responded to your opening "How can I assist you?".
+                    Respond directly to their intent. Do not force questions immediately.
+                    If it makes sense to transition to qualification, ask: "To get a better sense, what are you currently doing for marketing?"`;
 
                 case 'CURRENT_STATE':
                     return prompt + `The user just answered what they are using for marketing: "${userText}".
-                    Step 1 Complete.
-                    Task: 
-                    1. Acknowledge their answer.
-                    2. Mirror one phrase they used.
-                    3. Add one short insight (e.g. "A lot of teams rely on this early on.")
-                    4. Ask Step 2 Question: "What made you start looking for help with your marketing, or what challenges are you running into?"`;
+                    1. Quickly acknowledge what they said.
+                    2. Provide a relevant short insight or tip about that channel.
+                    3. THEN ask: "What challenges or frustrations are you experiencing with it?"`;
 
                 case 'PAIN':
-                    return prompt + `The user just answered "What challenges...".
-                    Step 2 Complete.
-                    Task:
-                    1. Reflect their challenge in their own words.
-                    2. Normalize it briefly (e.g. "That’s a very common stage to hit.")
-                    3. Ask Step 3 Question: "How long have these challenges been going on?"`;
+                    return prompt + `The user just answered their challenges: "${userText}".
+                    1. Briefly acknowledge and enable them (e.g., "That makes sense").
+                    2. Provide a short observation.
+                    3. THEN ask: "How long have those challenges been happening?"`;
 
                 case 'TIMING':
-                    return prompt + `The user just answered "How long...".
-                    Step 3 Complete.
-                    Task:
-                    1. Acknowledge the time frame.
-                    2. Add light context (e.g. "That’s usually when things start to feel frustrating or stagnant.")
-                    3. Ask Step 4 Question: "What does success in marketing look like for you and your company?"`;
+                    return prompt + `The user just answered how long: "${userText}".
+                    1. Acknowledge.
+                    2. Provide a brief insight.
+                    3. THEN ask: "What would success in marketing look like for you roughly?"`;
 
                 case 'OUTCOME':
-                    return prompt + `The user just answered "What does success look like...".
-                    Step 4 Complete.
-                    Task:
-                    1. Mirror their definition of success.
-                    2. TRANSITION: "From what you’ve shared, there are a few clear areas worth exploring."
-                    3. Ask Step 5 Question: "Based on what you’ve shared, would you be opposed to a short meet and greet or connect call to see how we could possibly support you?"
-                    If the answer is vague, ask one clarifying follow-up: "When you say 'better results', what would that look like in practice?"`;
+                    return prompt + `The user shared their goal: "${userText}".
+                    1. Acknowledge.
+                    2. Decide if a call is appropriate (usually yes if they have challenges).
+                    3. Ask EXACTLY: "Would you be opposed to a short, no-pressure meet-and-greet call to see if we could possibly support you?"`;
 
                 case 'INVITE':
                     return prompt + `The user responded to the call invite: "${userText}".
-                    Step 5 Complete.
                     
-                    IF THEY SAID YES/OPEN:
-                    1. Respond warmly: "Great — no pressure at all. This would just be a short, informal conversation to see if there’s a fit."
-                    2. Share this link EXACTLY: https://calendly.com/socialtigermarketing/30min
-                    3. Say: "Totally exploratory — if it’s helpful, great, and if not, no worries at all."
+                    IF THEY AGREE (YES/SURE/OK):
+                    1. Say: "Great. Here is the link:"
+                    2. Provide: https://calendly.com/socialtigermarketing/30min
+                    3. Add: "Totally exploratory — if it’s helpful, great, and if not, no worries at all."
 
-                    IF THEY SAID NO/HESITANT:
-                    1. Respond: "No problem at all — totally understand."
-                    2. Ask: "Would you like a few marketing tips you can apply right away instead?"`;
+                    IF THEY DECLINE (NO/BUSY/PASS):
+                    1. Respond respectfully: "No problem at all."
+                    2. Offer generic value: "Would you like a few practical marketing tips you can apply right away?"`;
 
                 case 'TIPS':
-                    return prompt + `The user is in the TIPS phase. User said: "${userText}".
-                    If they want tips, provide 2-3 concise, high-level insights (no deep tactics).
-                    Then ask if they have any other questions.`;
+                    return prompt + `The user wants marketing tips. Provide 2-3 genuine, high-value practical tips for LinkedIn or Email marketing. Keep it punchy.`;
 
                 case 'BOOKED':
-                    return prompt + `The user has been given the booking link or declined it. The conversation is effectively qualified.
-                    Respond simply and helpfully. Do NOT push for a meeting again.
-                    Example: "Happy to help — feel free to ask anything else about marketing."`;
+                    return prompt + `The user has already been given the link or declined. Just be helpful and polite.`;
 
                 default:
-                    return prompt + `Respond naturally to the user's input: "${userText}". Keep it helpful and concise.`;
+                    return prompt + `Respond naturally and helpfully to: "${userText}".`;
             }
         }
 
         // State Transitions
         function advanceState(currentState, userText) {
             const lower = userText.toLowerCase();
+
+            // Allow user to stay in GREETING if they are just chatting, 
+            // but if they answer the "what are you doing" question, move to CURRENT_STATE.
+            // For simplicity in this linear-ish architecture, we advance on every turn 
+            // unless the backend explicitly tells us otherwise (which it doesn't).
+            // We'll stick to the "Happy Path" assumption but relying on the LLM to steer if the user goes off-track.
+
             switch (currentState) {
                 case 'GREETING': return 'CURRENT_STATE';
                 case 'CURRENT_STATE': return 'PAIN';
@@ -174,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'OUTCOME': return 'INVITE';
                 case 'INVITE':
                     if (lower.includes('no') || lower.includes('pass') || lower.includes('busy')) return 'TIPS';
-                    return 'BOOKED'; // Transition to final state after link sharing
+                    return 'BOOKED';
                 case 'TIPS': return 'BOOKED';
                 case 'BOOKED': return 'BOOKED';
                 default: return currentState;
@@ -241,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (!response.ok) throw new Error('Network response was not ok');
 
-                const data = await response.json(); // Fix: Parse response
+                const data = await response.json();
 
                 // Remove loading
                 chatbotBody.removeChild(loadingDiv);
@@ -277,39 +283,39 @@ document.addEventListener('DOMContentLoaded', () => {
             const lower = userText.toLowerCase();
             // Interrupt Check
             if (lower.includes('what do you do') || lower.includes('how can you help') || lower.includes('services')) {
-                return "We offer Organic LinkedIn Growth to build authority, Warm & Cold Email Marketing to reach decision-makers directly, and Website Builds with AI Chatbots (like me!) to capture leads 24/7. Shall we continue with your marketing goals?";
+                return "Social Tiger helps with 3 main things: \n1. LinkedIn Organic Growth (ghostwriting & engagement). \n2. Warm & Cold Email Marketing (revenue-focused). \n3. Website Builds + AI Chatbots (like me!). \n\nShall we get back to your marketing goals?";
             }
 
             switch (state) {
-                case 'GREETING': // Transitioning TO Step 1
-                    return "Thanks for sharing. To start, what are you currently using for your marketing?";
+                case 'GREETING':
+                    return "Glad to hear. To get a better sense, what are you currently doing for marketing?";
 
-                case 'CURRENT_STATE': // Transitioning TO Step 2
-                    return "I see. A lot of teams rely on that early on. What made you start looking for help, or what challenges are you running into?";
+                case 'CURRENT_STATE':
+                    return "Thanks for sharing. That's a common starting point. What specific challenges or frustrations are you experiencing with it?";
 
-                case 'PAIN': // Transitioning TO Step 3
-                    return "That is a very common stage to hit. How long have these challenges been going on?";
+                case 'PAIN':
+                    return "I hear you. That can be really tricky to scale. How long have you been dealing with those challenges?";
 
-                case 'TIMING': // Transitioning TO Step 4
-                    return "That’s usually when things start to feel frustrating. What does success in marketing look like for you and your company?";
+                case 'TIMING':
+                    return "Got it. That's enough time to start feeling the drag. What would success in marketing look like for you ideally?";
 
-                case 'OUTCOME': // Transitioning TO Step 5
-                    return "Understood. From what you’ve shared, there are a few clear areas worth exploring. Based on that, would you be opposed to a short meet and greet or connect call to see how we could possibly support you?";
+                case 'OUTCOME':
+                    return "That sounds like a great goal. Based on what you've shared, would you be opposed to a short, no-pressure meet-and-greet call to see if we could possibly support you?";
 
-                case 'INVITE': // Handling Invite Response
+                case 'INVITE':
                     if (lower.includes('no') || lower.includes('pass') || lower.includes('busy')) {
-                        return "No problem at all — totally understand. Would you like a few marketing tips you can apply right away instead?";
+                        return "No problem at all — I understand. Would you like a few practical marketing tips you can apply right away?";
                     }
-                    return "Great — no pressure at all. This would just be a short conversation to see if there’s a fit. \n\nYou can book here: https://calendly.com/socialtigermarketing/30min \n\nTotally exploratory!";
+                    return "Great. Here is the link: https://calendly.com/socialtigermarketing/30min \n\nTotally exploratory — if it’s helpful, great, and if not, no worries at all.";
 
                 case 'TIPS':
-                    return "Sure! \n1. consistent posting builds trust. \n2. Engage with 5 prospects daily. \n3. Optimize your headline for clarity, not cleverness. \n\nAny other questions?";
+                    return "Here are a quick tips:\n1. Focus on one channel first until it works.\n2. Speak to problems, not just solutions.\n3. Consistent follow-ups win deals.\n\nLet me know if you need anything else!";
 
                 case 'BOOKED':
-                    return "Happy to help — feel free to ask anything else about marketing.";
+                    return "Happy to help! Feel free to ask anything else.";
 
                 default:
-                    return "I see. Tell me more.";
+                    return "That's interesting. Tell me more.";
             }
         }
 
