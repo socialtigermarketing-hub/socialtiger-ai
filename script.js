@@ -80,6 +80,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Chatbot State Management
         let chatState = 'GREETING'; // Initial state
+        let conversationContext = {
+            company: '',
+            marketing: '',
+            challenges: '',
+            duration: ''
+        };
+        // Keep track of message history for the LLM context
+        let messageHistory = [];
 
         const SYSTEM_IDENTITY = `You are The Social Tiger’s AI Assistant. 
         CORE RULES (NON-NEGOTIABLE):
@@ -105,6 +113,11 @@ document.addEventListener('DOMContentLoaded', () => {
             let prompt = SYSTEM_IDENTITY + "\n\n";
             const lowerText = userText.toLowerCase();
 
+            // Inject Known Context to ensure continuity
+            if (conversationContext.company) prompt += `KNOWN CONTEXT - User's CompanyContext: ${conversationContext.company}.\n`;
+            if (conversationContext.marketing) prompt += `KNOWN CONTEXT - User's MarketingMethod: ${conversationContext.marketing}.\n`;
+            if (conversationContext.challenges) prompt += `KNOWN CONTEXT - User's Challenges: ${conversationContext.challenges}.\n`;
+
             // UNIVERSAL HELP DETECTION (Global Interrupt)
             if (lowerText.includes('what do you do') || lowerText.includes('how can you help') || lowerText.includes('services') || lowerText.includes('help my business')) {
                 return prompt + `The user asked about services/help. 
@@ -116,26 +129,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
             switch (state) {
                 case 'GREETING':
-                    return prompt + `The user has responded to your opening greeting.
-                    - Analyze their intent.
-                    - If they ask for help, follow the Universal Help Detection.
-                    - If they state a problem, acknowledge it and ask: "Out of curiosity, what do you do, or what does your company do?" to start the discovery flow.
-                    - Do NOT be pushy.`;
+                    return prompt + `The user has responded to your opening greeting: "${userText}".
+                    1. Acknowledge their response warmly.
+                    2. IMMEDIATELY transition to discovery by asking: "Out of curiosity, what do you do, or what does your company do?"`;
 
                 case 'COMPANY':
                     return prompt + `The user just answered what their company does: "${userText}".
-                    1. Acknowledge and mirror their response (e.g., "That sounds like a dynamic industry...").
-                    2. Contextualize it briefly.
+                    1. Acknowledge and mirror their response specifically (mention their industry/role).
+                    2. Contextualize it briefly (industry, business type, role).
                     3. THEN ask: "Out of curiosity, what are you currently using for your marketing?"`;
 
                 case 'MARKETING':
-                    return prompt + `The user answered about their marketing: "${userText}".
+                    return prompt + `The user ("${conversationContext.company}") answered about their marketing: "${userText}".
                     1. Acknowledge and mirror their response.
-                    2. Analyze their situation lightly.
+                    2. Analyze their situation lightly given their industry.
                     3. THEN ask: "Is there anything you’d like to improve, or any challenges you’re encountering?"`;
 
                 case 'CHALLENGES':
-                    return prompt + `The user answered about challenges: "${userText}".
+                    return prompt + `The user (Company: "${conversationContext.company}", Marketing: "${conversationContext.marketing}") answered about challenges: "${userText}".
                     1. Acknowledge and reflect their response.
                     2. Offer a relevant brief insight or observation.
                     3. THEN ask: "How long have these challenges been going on?"`;
@@ -178,10 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             switch (currentState) {
-                case 'GREETING':
-                    // If they just say "hi", stay in GREETING? Or assume any substantive answer moves us to COMPANY?
-                    // Let's assume if they engaging, we try to move to COMPANY flow.
-                    return 'COMPANY';
+                case 'GREETING': return 'COMPANY';
                 case 'COMPANY': return 'MARKETING';
                 case 'MARKETING': return 'CHALLENGES';
                 case 'CHALLENGES': return 'DURATION';
@@ -195,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Local Fallback Logic (Simulates the AI behavior for testing)
+        // Local Fallback Logic (Simulates the AI behavior for testing or if API fails)
         function getLocalFallbackResponse(state, userText) {
             const lower = userText.toLowerCase();
 
@@ -206,18 +214,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             switch (state) {
                 case 'GREETING':
-                    // If we moved to COMPANY state in advanceState, this fallback might feel disjointed if we don't ask the question.
-                    // But in GREETING, if they didn't trigger the interrupt, we assume they said something else.
-                    return "Thanks for reaching out. To get a better sense of how we might help, what do you do, or what does your company do?";
+                    return "Thanks for reaching out! To get a better sense of how we might help, what do you do, or what does your company do?";
 
                 case 'COMPANY':
-                    return "That's a great industry to be in. Out of curiosity, what are you currently using for your marketing?";
+                    // Dynamic fallback using userText
+                    return `Ah, "${userText}" sounds like an interesting space. It's always great to connect with text. Out of curiosity, what are you currently using for your marketing?`;
 
                 case 'MARKETING':
-                    return "Makes sense. Many companies start there. Is there anything you’d like to improve, or any challenges you’re encountering with it?";
+                    return `I see. "${userText}" is a common approach. Is there anything you’d like to improve, or any challenges you’re encountering with it?`;
 
                 case 'CHALLENGES':
-                    return "I understand. That can certainly hold back growth. How long have these challenges been going on?";
+                    return `I understand. Dealing with "${userText}" can certainly hold back growth. How long have these challenges been going on?`;
 
                 case 'DURATION':
                     return "Got it. Based on what you’ve shared, would you be opposed to a short, no-pressure meet-and-greet call to see if we could possibly support you?";
@@ -255,6 +262,13 @@ document.addEventListener('DOMContentLoaded', () => {
             appendMessage(text, 'user');
             chatbotInput.value = '';
 
+            // Update Conversation Link (Context Accumulation)
+            // We capture context BEFORE advancing state, so we save 'what they just said' as the answer to 'previous state'
+            if (chatState === 'COMPANY') conversationContext.company = text;
+            if (chatState === 'MARKETING') conversationContext.marketing = text;
+            if (chatState === 'CHALLENGES') conversationContext.challenges = text;
+            if (chatState === 'DURATION') conversationContext.duration = text;
+
             // 2. Show Loading Indicator
             const loadingDiv = document.createElement('div');
             loadingDiv.classList.add('chat-msg', 'bot');
@@ -266,6 +280,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 3. Prepare Prompt & Update State
                 const systemInstruction = getSystemPrompt(chatState, text);
 
+                // Add to message history
+                messageHistory.push({ role: 'user', content: text });
+
+                // Keep history manageable - maybe last 10 messages + system
+                // But for this stateless function, we probably just send the robust system prompt + history.
+                // NOTE: Using a robust system prompt with "KNOWN CONTEXT" usually works better than raw history for guided flows, 
+                // but let's send recent history to ensure "Natural" conversational continuity if the user references previous turns.
+
+                const messagesToSend = [
+                    { role: 'system', content: systemInstruction },
+                    ...messageHistory.slice(-6) // Send last 6 turns for context
+                ];
+
                 // Update state for the next turn
                 chatState = advanceState(chatState, text);
 
@@ -274,10 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        messages: [
-                            { role: 'system', content: systemInstruction },
-                            { role: 'user', content: text }
-                        ]
+                        messages: messagesToSend
                     })
                 });
 
@@ -290,11 +314,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // 5. Show Bot Response
                 if (data.choices && data.choices[0] && data.choices[0].message) {
-                    appendMessage(data.choices[0].message.content, 'bot');
+                    const aiResponse = data.choices[0].message.content;
+                    appendMessage(aiResponse, 'bot');
+                    messageHistory.push({ role: 'assistant', content: aiResponse });
                 } else {
-                    // Fallback if response structure is unexpected
+                    // Fallback
                     const fallback = getLocalFallbackResponse(chatState, text);
                     appendMessage(fallback, 'bot');
+                    messageHistory.push({ role: 'assistant', content: fallback });
                 }
 
             } catch (error) {
@@ -306,6 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Use Local Fallback
                 const fallback = getLocalFallbackResponse(chatState, text);
                 appendMessage(fallback, 'bot');
+                messageHistory.push({ role: 'assistant', content: fallback });
             }
         }
 
