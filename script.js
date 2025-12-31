@@ -80,85 +80,91 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Chatbot State Management
         let chatState = 'GREETING'; // Initial state
-        let context = {}; // Store user responses
 
-        const SYSTEM_IDENTITY = `You are The Social Tiger’s AI Assistant. Your goal is to understand the visitor’s marketing situation, provide helpful insights, and ONLY invite them to a short call if it feels appropriate.
+        const SYSTEM_IDENTITY = `You are The Social Tiger’s AI Assistant. 
+        CORE RULES (NON-NEGOTIABLE):
+        - You must analyze and respond to what the user actually says.
+        - You must NEVER ignore a user’s answer.
+        - You must NEVER advance to the next question automatically without acknowledging the previous one.
+        - You must mirror or acknowledge the user’s response before continuing.
+        - You may only ask ONE question at a time.
+        - You are NOT a form, survey, or scripted flow. Respond naturally and conversationally.
         
-        IMPORTANT BEHAVIOR:
-        - You are NOT a form or survey. Respond naturally.
-        - Never blindly ask the next question.
-        - Only ask ONE question at a time.
-        - If the user asks something, answer it fully before asking anything else.
-        - Always acknowledge the user’s response before continuing.
-        - Do NOT repeat the opening message.`;
+        UNIVERSAL HELP DETECTION:
+        If the user asks "What do you do?", "How can you help?", or about services, you MUST:
+        1. Explains: Social Tiger helps with LinkedIn organic growth, Warm/Cold Email marketing, and Website/AI Chatbot builds. (Focus on BENEFITS).
+        2. IMMEDIATELY AFTER, ask: "Out of curiosity, what do you do, or what does your company do?"
+        
+        TONE & STYLE:
+        - Human, professional, calm.
+        - Helpful, not salesy.
+        - Consultative and respectful.`;
 
         // Define the Qualification Flow
         function getSystemPrompt(state, userText) {
             let prompt = SYSTEM_IDENTITY + "\n\n";
-
-            // INTERRUPT HANDLING
             const lowerText = userText.toLowerCase();
-            if (lowerText.includes('what do you do') || lowerText.includes('how can you help') || lowerText.includes('services')) {
-                return prompt + `The user has asked about services. IGNORE the current qualification flow for a moment.
-                 Explain clearly and simply that Social Tiger helps in 3 main areas:
-                 1. LinkedIn organic growth (ghostwritten content, strategic commenting, inbound conversations).
-                 2. Warm and cold email marketing (value-first outreach to increase Revenue).
-                 3. Website builds or upgrades with AI chatbot integration (to handle inbound inquiries).
+
+            // UNIVERSAL HELP DETECTION (Global Interrupt)
+            if (lowerText.includes('what do you do') || lowerText.includes('how can you help') || lowerText.includes('services') || lowerText.includes('help my business')) {
+                return prompt + `The user asked about services/help. 
+                 1. Briefly explain Social Tiger's 3 core areas (LinkedIn growth, Email marketing, Website/AI) focusing on BENEFITS (revenue, authority, time-saving).
+                 2. IMMEDIATELY AFTER, ask EXACTLY: "Out of curiosity, what do you do, or what does your company do?"
                  
-                 Explain BENEFITS, not features.
-                 After explaining, ask if they would like to continue talking about their marketing goals.`;
+                 Ignore the current state logic for this turn.`;
             }
 
             switch (state) {
                 case 'GREETING':
-                    return prompt + `The user has responded to your opening "How can I assist you?".
-                    Respond directly to their intent. Do not force questions immediately.
-                    If it makes sense to transition to qualification, ask: "To get a better sense, what are you currently doing for marketing?"`;
+                    return prompt + `The user has responded to your opening greeting.
+                    - Analyze their intent.
+                    - If they ask for help, follow the Universal Help Detection.
+                    - If they state a problem, acknowledge it and ask: "Out of curiosity, what do you do, or what does your company do?" to start the discovery flow.
+                    - Do NOT be pushy.`;
 
-                case 'CURRENT_STATE':
-                    return prompt + `The user just answered what they are using for marketing: "${userText}".
-                    1. Quickly acknowledge what they said.
-                    2. Provide a relevant short insight or tip about that channel.
-                    3. THEN ask: "What challenges or frustrations are you experiencing with it?"`;
+                case 'COMPANY':
+                    return prompt + `The user just answered what their company does: "${userText}".
+                    1. Acknowledge and mirror their response (e.g., "That sounds like a dynamic industry...").
+                    2. Contextualize it briefly.
+                    3. THEN ask: "Out of curiosity, what are you currently using for your marketing?"`;
 
-                case 'PAIN':
-                    return prompt + `The user just answered their challenges: "${userText}".
-                    1. Briefly acknowledge and enable them (e.g., "That makes sense").
-                    2. Provide a short observation.
-                    3. THEN ask: "How long have those challenges been happening?"`;
+                case 'MARKETING':
+                    return prompt + `The user answered about their marketing: "${userText}".
+                    1. Acknowledge and mirror their response.
+                    2. Analyze their situation lightly.
+                    3. THEN ask: "Is there anything you’d like to improve, or any challenges you’re encountering?"`;
 
-                case 'TIMING':
-                    return prompt + `The user just answered how long: "${userText}".
-                    1. Acknowledge.
-                    2. Provide a brief insight.
-                    3. THEN ask: "What would success in marketing look like for you roughly?"`;
+                case 'CHALLENGES':
+                    return prompt + `The user answered about challenges: "${userText}".
+                    1. Acknowledge and reflect their response.
+                    2. Offer a relevant brief insight or observation.
+                    3. THEN ask: "How long have these challenges been going on?"`;
 
-                case 'OUTCOME':
-                    return prompt + `The user shared their goal: "${userText}".
-                    1. Acknowledge.
-                    2. Decide if a call is appropriate (usually yes if they have challenges).
-                    3. Ask EXACTLY: "Would you be opposed to a short, no-pressure meet-and-greet call to see if we could possibly support you?"`;
+                case 'DURATION':
+                    return prompt + `The user answered how long: "${userText}".
+                    1. Summarize their situation clearly and show understanding.
+                    2. THEN ask EXACTLY: "Based on what you’ve shared, would you be opposed to a short, no-pressure meet-and-greet call to see if we could possibly support you?"`;
 
                 case 'INVITE':
                     return prompt + `The user responded to the call invite: "${userText}".
                     
-                    IF THEY AGREE (YES/SURE/OK):
-                    1. Say: "Great. Here is the link:"
-                    2. Provide: https://calendly.com/socialtigermarketing/30min
-                    3. Add: "Totally exploratory — if it’s helpful, great, and if not, no worries at all."
+                    IF POSITIVE/OPEN (Yes, Sure, Maybe):
+                    1. Acknowledge positively.
+                    2. Share this link: https://calendly.com/socialtigermarketing/30min
+                    3. Add light context (e.g., "to explore ideas...").
 
-                    IF THEY DECLINE (NO/BUSY/PASS):
-                    1. Respond respectfully: "No problem at all."
-                    2. Offer generic value: "Would you like a few practical marketing tips you can apply right away?"`;
+                    IF NEGATIVE/HESITANT (No, Busy, Pass):
+                    1. Respect the response.
+                    2. Say EXACTLY: "No problem at all — we understand it might not be a good time. Would you like some free marketing tips in the meantime?"`;
 
                 case 'TIPS':
-                    return prompt + `The user wants marketing tips. Provide 2-3 genuine, high-value practical tips for LinkedIn or Email marketing. Keep it punchy.`;
+                    return prompt + `The user accepted free tips. Provide 2-3 practical, high-value marketing tips (LinkedIn or Email focus). Keep it helpful and consultative.`;
 
                 case 'BOOKED':
-                    return prompt + `The user has already been given the link or declined. Just be helpful and polite.`;
+                    return prompt + `The user has completed the flow. Be helpful if they ask further questions, but do not restart the flow.`;
 
                 default:
-                    return prompt + `Respond naturally and helpfully to: "${userText}".`;
+                    return prompt + `Respond naturally.`;
             }
         }
 
@@ -166,156 +172,67 @@ document.addEventListener('DOMContentLoaded', () => {
         function advanceState(currentState, userText) {
             const lower = userText.toLowerCase();
 
-            // Allow user to stay in GREETING if they are just chatting, 
-            // but if they answer the "what are you doing" question, move to CURRENT_STATE.
-            // For simplicity in this linear-ish architecture, we advance on every turn 
-            // unless the backend explicitly tells us otherwise (which it doesn't).
-            // We'll stick to the "Happy Path" assumption but relying on the LLM to steer if the user goes off-track.
+            // Universal Interrupt: If asking about services, we effectively reset/start at COMPANY (since we ask "What do you do?" next)
+            if (lower.includes('what do you do') || lower.includes('how can you help') || lower.includes('services')) {
+                return 'COMPANY';
+            }
 
             switch (currentState) {
-                case 'GREETING': return 'CURRENT_STATE';
-                case 'CURRENT_STATE': return 'PAIN';
-                case 'PAIN': return 'TIMING';
-                case 'TIMING': return 'OUTCOME';
-                case 'OUTCOME': return 'INVITE';
+                case 'GREETING':
+                    // If they just say "hi", stay in GREETING? Or assume any substantive answer moves us to COMPANY?
+                    // Let's assume if they engaging, we try to move to COMPANY flow.
+                    return 'COMPANY';
+                case 'COMPANY': return 'MARKETING';
+                case 'MARKETING': return 'CHALLENGES';
+                case 'CHALLENGES': return 'DURATION';
+                case 'DURATION': return 'INVITE';
                 case 'INVITE':
                     if (lower.includes('no') || lower.includes('pass') || lower.includes('busy')) return 'TIPS';
-                    return 'BOOKED';
+                    return 'BOOKED'; // For yes/link
                 case 'TIPS': return 'BOOKED';
                 case 'BOOKED': return 'BOOKED';
                 default: return currentState;
             }
         }
 
-        function appendMessage(text, sender) {
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message', sender);
-
-            const p = document.createElement('p');
-            if (sender === 'bot') {
-                const linkified = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color: var(--color-primary); text-decoration: underline;">$1</a>');
-                p.innerHTML = linkified;
-            } else {
-                p.textContent = text;
-            }
-
-            messageDiv.appendChild(p);
-            chatbotBody.appendChild(messageDiv);
-
-            // Scroll to bottom
-            chatbotBody.scrollTop = chatbotBody.scrollHeight;
-        }
-
-        async function sendMessage(textOverride, isSilent = false) {
-            const text = textOverride || chatbotInput.value.trim();
-            if (!text) return;
-
-            // Clear input
-            if (!textOverride) chatbotInput.value = '';
-
-            // User Message (Skip if silent auto-start)
-            if (!isSilent) {
-                appendMessage(text, 'user');
-            }
-
-            // Loading Indicator
-            const loadingDiv = document.createElement('div');
-            loadingDiv.classList.add('message', 'bot', 'loading');
-            loadingDiv.innerHTML = '<p>Typing...</p>';
-            chatbotBody.appendChild(loadingDiv);
-            chatbotBody.scrollTop = chatbotBody.scrollHeight;
-
-            // Prepare Prompt
-            const prompt = getSystemPrompt(chatState, text);
-            const nextState = advanceState(chatState, text);
-
-            try {
-                // Combine system instruction and user message for the backend
-                // The backend expects specific OpenAI format: { messages: [...] }
-                const payload = {
-                    messages: [
-                        { role: "system", content: prompt },
-                        { role: "user", content: text }
-                    ]
-                };
-
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) throw new Error('Network response was not ok');
-
-                const data = await response.json();
-
-                // Remove loading
-                chatbotBody.removeChild(loadingDiv);
-
-                // Bot Message (Handle OpenAI Response Structure)
-                if (data.choices && data.choices.length > 0 && data.choices[0].message) {
-                    const reply = data.choices[0].message.content;
-                    appendMessage(reply, 'bot');
-                    chatState = nextState;
-                } else if (data.reply) {
-                    // Fallback for previous simple format if backend changes
-                    appendMessage(data.reply, 'bot');
-                    chatState = nextState;
-                } else {
-                    appendMessage("I received your message but didn't get a proper reply.", 'bot');
-                }
-
-            } catch (error) {
-                console.error('Chatbot Error:', error);
-                if (chatbotBody.contains(loadingDiv)) chatbotBody.removeChild(loadingDiv);
-
-                // FALLBACK MODE: Simulate AI response if API fails (CORS/Network error)
-                // This allows the user to test the flow even without backend connectivity.
-                console.log("Switching to Local Fallback Mode due to error.");
-                const fallbackReply = getLocalFallbackResponse(chatState, text);
-                appendMessage(fallbackReply, 'bot');
-                chatState = advanceState(chatState, text); // Advance state locally
-            }
-        }
-
-        // Local Fallback Logic (Simulates what the AI would generate based on the System Prompt)
+        // Local Fallback Logic (Simulates the AI behavior for testing)
         function getLocalFallbackResponse(state, userText) {
             const lower = userText.toLowerCase();
-            // Interrupt Check
+
+            // Universal Interrupt
             if (lower.includes('what do you do') || lower.includes('how can you help') || lower.includes('services')) {
-                return "Social Tiger helps with 3 main things: \n1. LinkedIn Organic Growth (ghostwriting & engagement). \n2. Warm & Cold Email Marketing (revenue-focused). \n3. Website Builds + AI Chatbots (like me!). \n\nShall we get back to your marketing goals?";
+                return "Social Tiger helps businesses with: \n1. LinkedIn Organic Growth (content & conversations). \n2. Warm & Cold Email Marketing (human, value-first). \n3. Website Builds & AI Chatbots.\n\nOut of curiosity, what do you do, or what does your company do?";
             }
 
             switch (state) {
                 case 'GREETING':
-                    return "Glad to hear. To get a better sense, what are you currently doing for marketing?";
+                    // If we moved to COMPANY state in advanceState, this fallback might feel disjointed if we don't ask the question.
+                    // But in GREETING, if they didn't trigger the interrupt, we assume they said something else.
+                    return "Thanks for reaching out. To get a better sense of how we might help, what do you do, or what does your company do?";
 
-                case 'CURRENT_STATE':
-                    return "Thanks for sharing. That's a common starting point. What specific challenges or frustrations are you experiencing with it?";
+                case 'COMPANY':
+                    return "That's a great industry to be in. Out of curiosity, what are you currently using for your marketing?";
 
-                case 'PAIN':
-                    return "I hear you. That can be really tricky to scale. How long have you been dealing with those challenges?";
+                case 'MARKETING':
+                    return "Makes sense. Many companies start there. Is there anything you’d like to improve, or any challenges you’re encountering with it?";
 
-                case 'TIMING':
-                    return "Got it. That's enough time to start feeling the drag. What would success in marketing look like for you ideally?";
+                case 'CHALLENGES':
+                    return "I understand. That can certainly hold back growth. How long have these challenges been going on?";
 
-                case 'OUTCOME':
-                    return "That sounds like a great goal. Based on what you've shared, would you be opposed to a short, no-pressure meet-and-greet call to see if we could possibly support you?";
+                case 'DURATION':
+                    return "Got it. Based on what you’ve shared, would you be opposed to a short, no-pressure meet-and-greet call to see if we could possibly support you?";
 
                 case 'INVITE':
                     if (lower.includes('no') || lower.includes('pass') || lower.includes('busy')) {
-                        return "No problem at all — I understand. Would you like a few practical marketing tips you can apply right away?";
+                        return "No problem at all — we understand it might not be a good time. Would you like some free marketing tips in the meantime?";
                     }
                     return "Great. Here is the link: https://calendly.com/socialtigermarketing/30min \n\nTotally exploratory — if it’s helpful, great, and if not, no worries at all.";
 
                 case 'TIPS':
-                    return "Here are a quick tips:\n1. Focus on one channel first until it works.\n2. Speak to problems, not just solutions.\n3. Consistent follow-ups win deals.\n\nLet me know if you need anything else!";
-
-                case 'BOOKED':
-                    return "Happy to help! Feel free to ask anything else.";
+                    return "Here are a few tips:\n1. Focus on problem-aware content, not just value props.\n2. Follow up consistently with value, not 'checking in'.\n3. relationships > automation.\n\nHope that helps!";
 
                 default:
-                    return "That's interesting. Tell me more.";
+                    return "I'm listening. Tell me more.";
             }
         }
 
