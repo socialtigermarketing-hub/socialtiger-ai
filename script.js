@@ -249,36 +249,12 @@ IMPORTANT:
 `;
             }
 
-            // CHECK INTENT (Feedback Loop)
-            // If the user's answer is invalid for the CURRENT state (and they didn't ask a services question), provide a Fallback/Clarification prompt.
-            // Note: We skip intent check for GREETING (any entry is fine) and TIPS/INVITE/BOOKED.
-            const intentCheckNeeded = ['COMPANY', 'MARKETING', 'CHALLENGES', 'DURATION'].includes(state);
-            if (intentCheckNeeded && !checkIntent(userText, state)) {
-                return prompt + `The user gave a vague, short, or unclear response ("${userText}") to your question about ${state}.
-                 1. Acknowledge the response politely but indicate you didn't quite catch that.
-                 2. Re-ask the question for ${state} naturally.`;
-            }
+            // (Redundant intent check removed - handled by state machine)
 
             switch (state) {
                 case 'GREETING':
-                    // 1. Direct Company Answer (e.g. "Construction")
-                    if (checkIntent(userText, 'COMPANY')) {
-                        return prompt + `User just stated their industry/company: "${userText}".
-                        1. Acknowledge and mirror the company/industry (briefly contextualize).
-                        2. Ask EXACTLY: "Out of curiosity, what are you currently using for your marketing?"`;
-                    }
-
-                    // 2. Implied Help (e.g. "I need leads", "Help with growth")
-                    if (lowerText.includes('help') || lowerText.includes('marketing') || lowerText.includes('growth')) {
-                        return prompt + `The user asked for help or mentioned marketing/growth: "${userText}".
-                        1. Acknowledge.
-                        2. Ask: "Before we dive in, can I ask — what do you do, or what does your company do?"`;
-                    }
-
-                    // 3. Generic Greeting
                     return prompt + `The user said hello or a generic greeting: "${userText}".
-                    1. Be friendly.
-                    2. Prompt them: "How can I help you with your marketing or growth today?"`;
+                    Be friendly and ask how you can help.`;
 
                 case 'COMPANY':
                     return prompt + `User just explained what they do: "${userText}".
@@ -451,11 +427,17 @@ Then ask:
             appendMessage(text, 'user');
             chatbotInput.value = '';
 
+            // If user gives company info immediately (while in GREETING), treat the turn as handled by COMPANY logic
+            const effectiveState =
+                (chatState === 'GREETING' && checkIntent(text, 'COMPANY'))
+                    ? 'COMPANY'
+                    : chatState;
+
             // Update Conversation State (Context Accumulation)
-            if (chatState === 'COMPANY') conversationContext.company = text;
-            if (chatState === 'MARKETING') conversationContext.marketing = text;
-            if (chatState === 'CHALLENGES') conversationContext.challenges = text;
-            if (chatState === 'DURATION') conversationContext.duration = text;
+            if (effectiveState === 'COMPANY') conversationContext.company = text;
+            if (effectiveState === 'MARKETING') conversationContext.marketing = text;
+            if (effectiveState === 'CHALLENGES') conversationContext.challenges = text;
+            if (effectiveState === 'DURATION') conversationContext.duration = text;
 
             // 2. Show Loading Indicator
             const loadingDiv = document.createElement('div');
@@ -466,11 +448,7 @@ Then ask:
 
             let systemInstruction = null;
 
-            // If user gives company info immediately (while in GREETING), treat the turn as handled by COMPANY logic
-            const effectiveState =
-                (chatState === 'GREETING' && checkIntent(text, 'COMPANY'))
-                    ? 'COMPANY'
-                    : chatState;
+            // (effectiveState moved up for context accumulation)
 
             try {
                 // 3. Prepare Prompt & Update State
@@ -501,9 +479,12 @@ Then ask:
                 const data = await response.json();
 
                 // Update state for the next turn AFTER response is generated
-                // ONLY advance if the intent was valid
-                if (checkIntent(text, effectiveState)) {
-                    chatState = advanceState(effectiveState, text);
+                // Advance state deterministically AFTER response
+                const nextState = advanceState(effectiveState, text);
+
+                // Only move forward if it actually changes
+                if (nextState !== effectiveState) {
+                    chatState = nextState;
                 }
 
                 // Remove Loading
