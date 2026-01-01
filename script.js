@@ -56,6 +56,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (chatbotToggle && chatbotWindow && chatbotClose) {
         let hasStarted = false;
 
+        // Chatbot State Management (Moved up to prevent hoisting issues)
+        let chatState = 'GREETING'; // Initial state
+        let hasAskedCompany = false;
+        let conversationContext = {
+            company: '',
+            marketing: '',
+            challenges: '',
+            duration: ''
+        };
+        // Keep track of message history for the LLM context
+        let messageHistory = [];
+
         // Customize the opening message here (Fast Load)
         const OPENING_MESSAGE = "Hi, I’m The Social Tiger’s AI Assistant. How can I assist you today?";
 
@@ -78,16 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const chatbotBody = document.querySelector('.chatbot-body');
         const API_URL = 'https://magenta-fairy-2a3006.netlify.app/.netlify/functions/chat';
 
-        // Chatbot State Management
-        let chatState = 'GREETING'; // Initial state
-        let conversationContext = {
-            company: '',
-            marketing: '',
-            challenges: '',
-            duration: ''
-        };
-        // Keep track of message history for the LLM context
-        let messageHistory = [];
+
 
         const SYSTEM_IDENTITY = `You are The Social Tiger’s AI Assistant.
 
@@ -170,12 +173,16 @@ Social Tiger helps businesses create consistent inbound interest and remove fric
             switch (state) {
                 case 'COMPANY':
                     // Look for business/role keywords or meaningful length
-                    // Keywords: business, agency, company, we do, i run, saas, consulting, service, build, sell, help
-                    const companyKeywords = ['agency', 'company', 'consulting', 'saas', 'service', 'we', 'i run', 'owner', 'founder', 'marketing', 'sales', 'coach', 'build', 'sell', 'help', 'provider', 'firm', 'store', 'shop'];
+                    // Keywords: business, agency, company, we do, i run, saas, consulting, service, build, sell, provider, firm, store, shop
+                    const companyKeywords = ['agency', 'company', 'consulting', 'saas', 'service', 'we', 'i run', 'owner', 'founder', 'coach', 'build', 'sell', 'provider', 'firm', 'store', 'shop'];
                     if (companyKeywords.some(kw => lower.includes(kw))) return true;
                     // If no keyword, accept if it has some substance (e.g. "Construction", "Law firm") - length > 3 is already checked.
                     // Let's be slightly stricter for vague short answers
-                    if (words.length < 2 && lower.length < 5) return false; // e.g. "yes", "stuff"
+                    // Accept single-word industry answers like "construction", "plumbing", etc.
+                    if (words.length === 1 && lower.length >= 6) return true;
+
+                    // Reject ultra-vague responses
+                    if (words.length < 2 && lower.length < 5) return false;
                     return true;
 
                 case 'MARKETING':
@@ -224,6 +231,7 @@ Social Tiger helps businesses create consistent inbound interest and remove fric
                 lowerText.includes('how can you help') ||
                 (lowerText.includes('services') && !lowerText.includes('using'))
             ) {
+                hasAskedCompany = true;
                 return prompt + `
 The user asked about services.
 
@@ -253,12 +261,22 @@ IMPORTANT:
 
             switch (state) {
                 case 'GREETING':
-                    return prompt + `The user responded to greeting: "${userText}".
-                    If they asked for help or mentioned marketing/growth:
-                    1. Acknowledge.
-                    2. Ask: "Before we dive in, can I ask — what do you do, or what does your company do?"
-                    
-                    If they said just "hi" or generic:
+                    // 1. Direct Company Answer (e.g. "Construction")
+                    if (checkIntent(userText, 'COMPANY')) {
+                        return prompt + `User just stated their industry/company: "${userText}".
+                        1. Acknowledge and mirror the company/industry (briefly contextualize).
+                        2. Ask EXACTLY: "Out of curiosity, what are you currently using for your marketing?"`;
+                    }
+
+                    // 2. Implied Help (e.g. "I need leads", "Help with growth")
+                    if (lowerText.includes('help') || lowerText.includes('marketing') || lowerText.includes('growth')) {
+                        return prompt + `The user asked for help or mentioned marketing/growth: "${userText}".
+                        1. Acknowledge.
+                        2. Ask: "Before we dive in, can I ask — what do you do, or what does your company do?"`;
+                    }
+
+                    // 3. Generic Greeting
+                    return prompt + `The user said hello or a generic greeting: "${userText}".
                     1. Be friendly.
                     2. Prompt them: "How can I help you with your marketing or growth today?"`;
 
@@ -324,9 +342,6 @@ Then ask:
 
             switch (currentState) {
                 case 'GREETING':
-                    // If they just say "hi", we ask "How can I help?". We stay in GREETING?
-                    // If they say "I need leads", we ask "What do you do?". Transition to COMPANY.
-                    if (lower.length < 4 || lower === 'hello' || lower === 'hi') return 'GREETING'; // Stay if simple hi
                     return 'COMPANY';
                 case 'COMPANY':
                     if (checkIntent(userText, 'COMPANY')) return 'MARKETING';
@@ -341,8 +356,20 @@ Then ask:
                     if (checkIntent(userText, 'DURATION')) return 'INVITE'; // Usually duration is easy to pass
                     return 'DURATION'; // Or stay if really nonsense
                 case 'INVITE':
-                    if (lower.includes('no') || lower.includes('pass') || lower.includes('not now')) return 'TIPS';
-                    if (lower.includes('yes') || lower.includes('sure') || lower.includes('ok')) return 'BOOKED';
+                    if (
+                        lower.includes('no') ||
+                        lower.includes('not now') ||
+                        lower.includes('maybe later') ||
+                        lower.includes('pass')
+                    ) return 'TIPS';
+
+                    if (
+                        lower.includes('yes') ||
+                        lower.includes('sure') ||
+                        lower.includes('sounds good') ||
+                        lower.includes('happy to')
+                    ) return 'BOOKED';
+
                     return 'INVITE'; // Unclear answer?
                 case 'TIPS': return 'BOOKED';
                 case 'BOOKED': return 'BOOKED';
@@ -365,15 +392,7 @@ Then ask:
 
             switch (state) {
                 case 'GREETING':
-                    if (
-                        lowerContent.includes('help') ||
-                        lowerContent.includes('marketing') ||
-                        lowerContent.includes('growth') ||
-                        lowerContent.includes('services')
-                    ) {
-                        return "Absolutely — happy to help. Before we dive in, can I ask: what do you do, or what does your company do?";
-                    }
-                    return "Hi! How can I help you today?";
+                    return "To get started, could you tell me a little bit about what you or your company does?";
 
                 case 'COMPANY':
                     return `Thanks for sharing. That's a great space to be in. Out of curiosity, what are you currently using for your marketing?`;
@@ -416,6 +435,18 @@ Then ask:
             const text = chatbotInput.value.trim();
             if (!text) return;
 
+
+
+            // 0. Hard Guard: No Contact Info
+            if (/(email|e-mail|phone|number|contact me)/i.test(text)) {
+                appendMessage(
+                    "Just to clarify — I don’t collect contact details here. I’m happy to help directly in this chat though.",
+                    'bot'
+                );
+                chatbotInput.value = '';
+                return;
+            }
+
             // 1. Show User Message
             appendMessage(text, 'user');
             chatbotInput.value = '';
@@ -434,11 +465,16 @@ Then ask:
             chatbotBody.scrollTop = chatbotBody.scrollHeight;
 
             let systemInstruction = null;
-            const previousState = chatState; // Capture state before any async ops
+
+            // If user gives company info immediately (while in GREETING), treat the turn as handled by COMPANY logic
+            const effectiveState =
+                (chatState === 'GREETING' && checkIntent(text, 'COMPANY'))
+                    ? 'COMPANY'
+                    : chatState;
 
             try {
                 // 3. Prepare Prompt & Update State
-                systemInstruction = getSystemPrompt(chatState, text);
+                systemInstruction = getSystemPrompt(effectiveState, text);
 
                 console.log("STATE:", chatState);
                 console.log("SYSTEM PROMPT:", systemInstruction);
@@ -465,7 +501,10 @@ Then ask:
                 const data = await response.json();
 
                 // Update state for the next turn AFTER response is generated
-                chatState = advanceState(previousState, text);
+                // ONLY advance if the intent was valid
+                if (checkIntent(text, effectiveState)) {
+                    chatState = advanceState(effectiveState, text);
+                }
 
                 // Remove Loading
                 if (loadingDiv.parentNode) chatbotBody.removeChild(loadingDiv);
@@ -476,7 +515,7 @@ Then ask:
                     appendMessage(aiResponse, 'bot');
                     messageHistory.push({ role: 'assistant', content: aiResponse });
                 } else {
-                    const fallback = getLocalFallbackResponse(previousState, text);
+                    const fallback = getLocalFallbackResponse(effectiveState, text);
                     appendMessage(fallback, 'bot');
                 }
 
@@ -485,7 +524,7 @@ Then ask:
                 if (loadingDiv.parentNode) chatbotBody.removeChild(loadingDiv);
 
                 // Always fall back to state-aware logic
-                const safeFallback = getLocalFallbackResponse(previousState, text);
+                const safeFallback = getLocalFallbackResponse(effectiveState, text);
                 appendMessage(safeFallback, 'bot');
             }
         }
