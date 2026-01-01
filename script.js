@@ -219,10 +219,26 @@ Social Tiger helps businesses create consistent inbound interest and remove fric
             if (conversationContext.challenges) prompt += `KNOWN CONTEXT - User's Challenges: ${conversationContext.challenges}.\n`;
 
             // UNIVERSAL INTERRUPT: Services
-            if (lowerText.includes('what do you do') || lowerText.includes('how can you help') || (lowerText.includes('services') && !lowerText.includes('using'))) {
-                return prompt + `The user asked about services/help. 
-                 1. Briefly explain Social Tiger's 3 core areas (LinkedIn, Email, Website/AI).
-                 2. IMMEDIATELY AFTER, ask: "Out of curiosity, what are you currently using for your marketing right now?" (This acts as the transition to Step 2).`;
+            if (
+                lowerText.includes('what do you do') ||
+                lowerText.includes('how can you help') ||
+                (lowerText.includes('services') && !lowerText.includes('using'))
+            ) {
+                return prompt + `
+The user asked about services.
+
+1. Briefly explain what Social Tiger does and the BENEFITS:
+   - LinkedIn organic growth (ghostwritten content, strategic commenting, inbox management)
+   - Warm & cold email marketing (predictable inbound interest)
+   - Website builds/upgrades + AI chatbot (clear positioning, better conversions, instant inquiry handling)
+
+2. THEN ask EXACTLY:
+"Before we dive in, can I ask — what do you do, or what does your company do?"
+
+IMPORTANT:
+- Do NOT ask about marketing yet.
+- This keeps the flow aligned with the COMPANY state.
+`;
             }
 
             // CHECK INTENT (Feedback Loop)
@@ -287,7 +303,18 @@ CRITICAL RULES:
                     return prompt + `User is done. Be helpful if they ask more, but don't restart flow.`;
 
                 default:
-                    return prompt + `Respond naturally.`;
+                    return SYSTEM_IDENTITY + `
+You are The Social Tiger's AI Assistant.
+
+If the state is unclear:
+- Clearly explain how Social Tiger helps businesses grow using:
+  • LinkedIn organic growth (ghostwritten content, strategic commenting, inbox management)
+  • Warm & cold email marketing (predictable inbound interest)
+  • Website builds/upgrades + AI chatbot (clear positioning, better conversions, instant inquiry handling)
+
+Then ask:
+"What do you do, or what does your company do?"
+`;
             }
         }
 
@@ -328,17 +355,25 @@ CRITICAL RULES:
             const lowerContent = userText.toLowerCase();
 
             // Universal Interrupt
-            if (lowerContent.includes('what do you do') || lowerContent.includes('how can you help') || lowerContent.includes('services')) {
-                return "Social Tiger helps businesses with LinkedIn Organic Growth, Warm & Cold Email Marketing, and High-Converting Websites/Chatbots to drive consistent inbound interest.\n\nOut of curiosity, what are you currently using for your marketing right now?";
+            if (
+                lowerContent.includes('what do you do') ||
+                lowerContent.includes('how can you help') ||
+                lowerContent.includes('services')
+            ) {
+                return "Social Tiger helps businesses with LinkedIn Organic Growth, value-first email marketing, and high-converting websites with AI chatbots.\n\nBefore we dive in, can I ask — what do you do, or what does your company do?";
             }
 
             switch (state) {
                 case 'GREETING':
-                    // If specific help asked
-                    if (lowerContent.includes('marketing') || lowerContent.includes('growth') || lowerContent.includes('leads')) {
-                        return "Before we dive in, can I ask — what do you do, or what does your company do?";
+                    if (
+                        lowerContent.includes('help') ||
+                        lowerContent.includes('marketing') ||
+                        lowerContent.includes('growth') ||
+                        lowerContent.includes('services')
+                    ) {
+                        return "Absolutely — happy to help. Before we dive in, can I ask: what do you do, or what does your company do?";
                     }
-                    return "Hi there! How can I assist you with your marketing or growth today?";
+                    return "Hi! How can I help you today?";
 
                 case 'COMPANY':
                     return `Thanks for sharing. That's a great space to be in. Out of curiosity, what are you currently using for your marketing?`;
@@ -398,10 +433,15 @@ CRITICAL RULES:
             chatbotBody.appendChild(loadingDiv);
             chatbotBody.scrollTop = chatbotBody.scrollHeight;
 
+            let systemInstruction = null;
+            const previousState = chatState; // Capture state before any async ops
+
             try {
                 // 3. Prepare Prompt & Update State
-                const previousState = chatState;
-                const systemInstruction = getSystemPrompt(chatState, text);
+                systemInstruction = getSystemPrompt(chatState, text);
+
+                console.log("STATE:", chatState);
+                console.log("SYSTEM PROMPT:", systemInstruction);
 
                 // Add to history
                 messageHistory.push({ role: 'user', content: text });
@@ -436,16 +476,7 @@ CRITICAL RULES:
                     appendMessage(aiResponse, 'bot');
                     messageHistory.push({ role: 'assistant', content: aiResponse });
                 } else {
-                    // Fallback
-                    // We need to use the PREVIOUS state for the fallback logic to match the prompt logic kind of?
-                    // Actually fallback logic usually just reacts to the current input given the state we WERE in.
-                    // But we just updated `chatState`. So we might need to pass the 'old' state to fallback? 
-                    // Let's just use the updated logic. `getLocalFallbackResponse` takes `state` and `userText`.
-                    // If we passed the NEW state, e.g. 'COMPANY' -> 'MARKETING'. Fallback sees 'MARKETING' and 'userText' (which was company description). 
-                    // Fallback for MARKETING expects userText to be "I use email". But userText is "I sell shoes".
-                    // So we must pass the OLD state to fallback.
-                    // BUT for simplicity in this script, let's just admit fallback is for testing.
-                    const fallback = getLocalFallbackResponse('DEFAULT', text); // Simplified for safety or logic could be tricky here without tracking old state.
+                    const fallback = getLocalFallbackResponse(previousState, text);
                     appendMessage(fallback, 'bot');
                 }
 
@@ -453,12 +484,9 @@ CRITICAL RULES:
                 console.error('Chatbot Error:', error);
                 if (loadingDiv.parentNode) chatbotBody.removeChild(loadingDiv);
 
-                // Use Local Fallback (Pass 'DEFAULT' or try to guess? safely just generic or try to use current flow if possible)
-                // Actually, let's try to do it right. We need the state *before* update to know what the user just answered.
-                // But we already updated `chatState`.
-                // For the purpose of this task (which assumes API works mainly), strict fallback logic isn't the priority, but let's be safe.
-                const fallback = "I'm having trouble connecting, but I'd love to help. Could you tell me more?";
-                appendMessage(fallback, 'bot');
+                // Always fall back to state-aware logic
+                const safeFallback = getLocalFallbackResponse(previousState, text);
+                appendMessage(safeFallback, 'bot');
             }
         }
 
