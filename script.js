@@ -65,8 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
             challenges: '',
             duration: ''
         };
-        // Keep track of message history for the LLM context
-        let messageHistory = [];
+
 
         // Customize the opening message here (Fast Load)
         const OPENING_MESSAGE = "Hi, I’m The Social Tiger’s AI Assistant. How can I assist you today?";
@@ -336,13 +335,6 @@ CRITICAL RULES:
                 return; // STOP. Do not advance state. Do not hit API.
             }
 
-            // Update Conversation State (Context Accumulation) - BEFORE moving
-            // Note: chatState is still the state where the user is AnswerING.
-            if (chatState === 'COMPANY') conversationContext.company = text;
-            if (chatState === 'MARKETING') conversationContext.marketing = text;
-            if (chatState === 'CHALLENGES') conversationContext.challenges = text;
-            if (chatState === 'DURATION') conversationContext.duration = text;
-
             // 3. Show Loading Indicator
             const loadingDiv = document.createElement('div');
             loadingDiv.classList.add('chat-msg', 'bot');
@@ -354,15 +346,10 @@ CRITICAL RULES:
                 // 4. Prepare Prompt using CURRENT state
                 const systemInstruction = getSystemPrompt(chatState, text);
 
-                console.log("STATE:", chatState);
-                console.log("SYSTEM PROMPT:", systemInstruction);
-
-                // Add to history
-                messageHistory.push({ role: 'user', content: text });
-
+                // CRITICAL FIX #1: VALID PAYLOAD ONLY (No History)
                 const messagesToSend = [
                     { role: 'system', content: systemInstruction },
-                    ...messageHistory.slice(-6)
+                    { role: 'user', content: text }
                 ];
 
                 // 5. Call API
@@ -378,42 +365,53 @@ CRITICAL RULES:
 
                 const data = await response.json();
 
-                // 6. Advance State Deterministically
-                const nextState = advanceState(chatState, text);
-
-                // Update internal state
-                const prevState = chatState; // For checking transitions
-                chatState = nextState;
-
                 // Remove Loading
                 if (loadingDiv.parentNode) chatbotBody.removeChild(loadingDiv);
 
-                // 7. Show Bot Response
                 if (data.choices && data.choices[0] && data.choices[0].message) {
                     const aiResponse = data.choices[0].message.content;
+
+                    // Show Bot Response
                     appendMessage(aiResponse, 'bot');
-                    messageHistory.push({ role: 'assistant', content: aiResponse });
+
+                    // CRITICAL FIX #2: ADVANCE STATE ONLY AFTER SUCCESS
+                    // Update Context based on what the user JUST answered (captured in 'text')
+                    if (chatState === 'COMPANY') conversationContext.company = text;
+                    if (chatState === 'MARKETING') conversationContext.marketing = text;
+                    if (chatState === 'CHALLENGES') conversationContext.challenges = text;
+                    if (chatState === 'DURATION') conversationContext.duration = text;
+
+                    // Calculate Next State
+                    const nextState = advanceState(chatState, text);
+
+                    // Update internal state
+                    const prevState = chatState;
+                    chatState = nextState;
 
                     // Post-Response Logic: Append Link if we just moved to BOOKED from INVITE
-                    // AND the AI response didn't seemingly include the link (to be safe)
                     if (chatState === 'BOOKED' && prevState === 'INVITE') {
                         if (!aiResponse.includes('calendly.com')) {
                             appendMessage("Great! Please book some time with us here: https://calendly.com/socialtigermarketing/30min", 'bot');
                         }
                     }
-
                 } else {
-                    const fallback = getLocalFallbackResponse(prevState, text); // Use prevState to generate next q
-                    appendMessage(fallback, 'bot');
+                    console.error("Invalid response structure:", data);
+                    // If API returns success but no content, fallback gracefully?
+                    // For now, let's treat it as an error to be safe or use fallback.
+                    throw new Error('Invalid API Response Structure');
                 }
 
             } catch (error) {
                 console.error('Chatbot Error:', error);
                 if (loadingDiv.parentNode) chatbotBody.removeChild(loadingDiv);
 
-                // Fallback
-                const safeFallback = "I'm having a bit of trouble connecting. Please try again in a moment.";
-                appendMessage(safeFallback, 'bot');
+                // Do NOT advance state.
+                // Do NOT repeat questions (User sees the error and can try again if they want, or we prompt them?)
+                // The task says "The error ... must disappear". 
+                // Since we fixed payload, we expect fewer errors. 
+                // If an error DOES occur (network), we show a polite message.
+
+                appendMessage("I'm having a bit of trouble connecting. Please try again in a moment.", 'bot');
             }
         }
 
