@@ -402,16 +402,20 @@ CRITICAL RULES:
                 }
 
             } catch (error) {
-                console.error('Chatbot Error:', error);
+                console.error('Chatbot Error (Using Fallback):', error);
                 if (loadingDiv.parentNode) chatbotBody.removeChild(loadingDiv);
 
-                // Do NOT advance state.
-                // Do NOT repeat questions (User sees the error and can try again if they want, or we prompt them?)
-                // The task says "The error ... must disappear". 
-                // Since we fixed payload, we expect fewer errors. 
-                // If an error DOES occur (network), we show a polite message.
+                // Fallback: Use local script logic to keep flow alive
+                const fallbackResponse = getLocalFallbackResponse(chatState, text);
+                appendMessage(fallbackResponse, 'bot');
 
-                appendMessage("I'm having a bit of trouble connecting. Please try again in a moment.", 'bot');
+                // Advance State (Simulate Success) to prevent loop
+                if (chatState === 'COMPANY') conversationContext.company = text;
+                if (chatState === 'MARKETING') conversationContext.marketing = text;
+                if (chatState === 'CHALLENGES') conversationContext.challenges = text;
+                if (chatState === 'DURATION') conversationContext.duration = text;
+
+                chatState = advanceState(chatState, text);
             }
         }
 
