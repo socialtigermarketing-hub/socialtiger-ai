@@ -52,30 +52,62 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatbotToggle = document.getElementById('chatbot-toggle');
     const chatbotWindow = document.getElementById('chatbot-window');
     const chatbotClose = document.getElementById('chatbot-close');
+    const chatbotInput = document.getElementById('chatbot-input');
+    const chatbotSend = document.getElementById('chatbot-send');
+    const chatbotBody = document.querySelector('.chatbot-body');
+    const API_URL = 'https://magenta-fairy-2a3006.netlify.app/.netlify/functions/chat';
 
     if (chatbotToggle && chatbotWindow && chatbotClose) {
-        let hasStarted = false;
 
-        // Chatbot State Management (Moved up to prevent hoisting issues)
-        let chatState = 'GREETING'; // Initial state
-        let hasAskedCompany = false;
-        let conversationContext = {
-            company: '',
-            marketing: '',
-            challenges: '',
-            duration: ''
+        // --- STRICT FLOW STATE MANAGEMENT ---
+        let currentStep = 1;
+        let isFlowComplete = false;
+        let isWaitingForTipsReply = false; // Sub-state for Step 5 negative path
+        let hasInitialized = false;
+
+        const FLOW_MESSAGES = {
+            STEP_1: `Hi, I’m The Social Tiger’s AI Assistant.
+
+The Social Tiger helps businesses grow through:
+
+1️⃣ LinkedIn & Social Media Organic Growth — using strategic ghostwritten content to stimulate inbound interest, targeted outbound connections to reach the right audience, and DM inbox management focused on booking qualified calls.
+
+2️⃣ Warm & Cold Strategic Email Campaigns — designed to generate consistent inbound interest and predictable conversations without spamming or burning your list.
+
+3️⃣ High-Converting Website Creation or Upgrades — with clear positioning, better conversion paths, and an AI chatbot that handles inbound inquiries instantly so you don’t have to.
+
+How may I assist you today?`,
+
+            STEP_1_5: `Before we dive in, can I ask — what do you do, or what does your company do?`,
+
+            STEP_2: `Thanks for sharing. Out of curiosity, what are you currently using for your marketing?`,
+
+            STEP_3: `Got it. Is there anything you would like to possibly improve in your current marketing or any possible challenges you are facing now?`,
+
+            STEP_4: `How long have you been facing these challenges or wanting to improve your current marketing?`,
+
+            STEP_5: `Thanks for sharing this. This really aligns to people and companies we have helped with great results! Based on what you’ve shared, would you be opposed to a quick meet and greet or connect call to see how we can support you?`,
+
+            STEP_5_NEGATIVE: `No problem, we understand that that may not be a good time. In the meantime would you like some free marketing tips or advice that can really make a difference?`,
+
+            STEP_6: `Great! You can book some time below (click the button). Slots are limited though so try to book ASAP!`
         };
 
+        const SYSTEM_IDENTITY = `You are The Social Tiger’s AI Assistant.
+Your role is to:
+- Help visitors with marketing-related questions
+- Understand their business and context
+- Provide real, useful marketing insight
+- Guide conversations naturally toward clarity and optional support
 
-        // Customize the opening message here (Fast Load)
-        const OPENING_MESSAGE = "Hi, I’m The Social Tiger’s AI Assistant. How can I assist you today?";
+You are helpful, professional, and concise.`;
 
+
+        // Toggle Window
         chatbotToggle.addEventListener('click', () => {
             chatbotWindow.classList.toggle('hidden');
-            if (!chatbotWindow.classList.contains('hidden') && !hasStarted) {
-                hasStarted = true;
-                // Directly append the opening message without API call
-                appendMessage(OPENING_MESSAGE, 'bot');
+            if (!chatbotWindow.classList.contains('hidden') && !hasInitialized) {
+                initializeChat();
             }
         });
 
@@ -83,374 +115,239 @@ document.addEventListener('DOMContentLoaded', () => {
             chatbotWindow.classList.add('hidden');
         });
 
-        // Chatbot API Integration
-        const chatbotInput = document.getElementById('chatbot-input');
-        const chatbotSend = document.getElementById('chatbot-send');
-        const chatbotBody = document.querySelector('.chatbot-body');
-        const API_URL = 'https://magenta-fairy-2a3006.netlify.app/.netlify/functions/chat';
+        // Initialize Chat
+        function initializeChat() {
+            hasInitialized = true;
+            appendMessage(FLOW_MESSAGES.STEP_1, 'bot');
+        }
 
-
-
-        const SYSTEM_IDENTITY = `You are The Social Tiger’s AI Assistant.
-
-Your role is to:
-- Help visitors with marketing-related questions
-- Understand their business and context
-- Provide real, useful marketing insight
-- Guide conversations naturally toward clarity and optional support
-
-You must feel human, adaptive, and conversational, not scripted.
-
-🧠 CORE BEHAVIOR RULES (CRITICAL)
-- Always prioritize answering the user’s direct question first
-- Never disregard what the user says
-- Always acknowledge and mirror user responses before progressing
-- You may pause the flow to answer questions, then resume naturally
-- Never force the flow unnaturally
-- Never give passive responses (e.g. “I’m listening”, “Tell me more”)
-- Every response must add value or clarity
-- If the user interrupts the flow with a question, answer it fully first, then naturally resume the previous step without skipping any questions.
-- Never repeat a question you have already asked.
-- Never skip a step in the process.
-
-🧩 INITIAL GREETING
-Always start with: “Hi, I’m The Social Tiger’s AI Assistant. How can I assist you today?”
-
-🧩 FLOW OVERVIEW
-Greeting -> Company -> Marketing -> Challenges -> Duration -> Invite -> Booked/Tips
-
-`;
-
-        // Check Intelligibility (The ONLY Validation)
-        function validateIntelligibility(text) {
-            if (!text || text.trim().length === 0) return false;
+        // --- VALIDATION (Step 1 Only) ---
+        function isUnintelligible(text) {
+            if (!text || text.trim().length < 2) return true; // Empty or too short
 
             const cleanText = text.trim();
 
-            // 1. Check for only symbols
-            if (/^[^a-zA-Z0-9]+$/.test(cleanText)) return false;
+            // No alphabetic characters
+            if (!/[a-zA-Z]/.test(cleanText)) return true; // Mostly symbols/numbers
 
-            // 2. Check for keyboard mashing/random characters
-            // Heuristic: If it's long (>10 chars) and has no vowels, it's likely gibberish
-            if (cleanText.length > 8 && !/[aeiouyAEIOUY]/.test(cleanText)) return false;
+            // Mostly symbols check (more than 80% non-alphanumeric)
+            const nonAlpha = cleanText.replace(/[a-zA-Z0-9\s]/g, '').length;
+            if (nonAlpha > cleanText.length * 0.8) return true;
 
-            // 3. Very short repetitive patterns (e.g. "aaaaa")
-            if (/(.)\1{4,}/.test(cleanText)) return false;
+            // Repeated nonsense (simple heuristic: repeating char sequences)
+            if (/(.+?)\1{4,}/.test(cleanText)) return true; // e.g., aaaaa, qqqqq
 
-            return true;
+            return false;
         }
 
-        // Define the Logic
-        function getSystemPrompt(state, userText) {
-            let prompt = SYSTEM_IDENTITY + "\n\n";
+        // --- CORE LOGIC ---
+        async function handleUserMessage() {
+            const text = chatbotInput.value.trim();
+            if (!text) return; // Basic input check
 
-            // Inject Known Context
-            if (conversationContext.company) prompt += `KNOWN CONTEXT - User's Company: ${conversationContext.company}.\n`;
-            if (conversationContext.marketing) prompt += `KNOWN CONTEXT - User's Marketing: ${conversationContext.marketing}.\n`;
-            if (conversationContext.challenges) prompt += `KNOWN CONTEXT - User's Challenges: ${conversationContext.challenges}.\n`;
-            if (conversationContext.duration) prompt += `KNOWN CONTEXT - User's Timeline: ${conversationContext.duration}.\n`;
+            // Display User Message
+            appendMessage(text, 'user');
+            chatbotInput.value = '';
 
-            // STRICT LINEAR FLOW INSTRUCTIONS
-            switch (state) {
-                case 'GREETING':
-                    // Current State: GREETING. Next State: COMPANY.
-                    return prompt + `
-The user has said hello.
-1. Acknowledge the user warmly.
-2. Ask THIS EXACT QUESTION next: "Before we dive in, can I ask — what do you do, or what does your company do?"
-`;
+            // If Flow is Complete -> Standard API Chat
+            if (isFlowComplete) {
+                await sendToApi(text);
+                return;
+            }
 
-                case 'COMPANY':
-                    // Current State: COMPANY (User just answered validly). Next State: MARKETING.
-                    return prompt + `
-The user just explained what they do: "${userText}".
-1. Acknowledge and mirror their response (contextualize their industry/business).
-2. Ask THIS EXACT QUESTION next: "Out of curiosity, what are you currently using for your marketing?"
-`;
+            // --- STRICT FLOW HANDLER ---
 
-                case 'MARKETING':
-                    // Current State: MARKETING (User just answered). Next State: CHALLENGES.
-                    return prompt + `
-The user just explained their marketing: "${userText}".
-1. Mirror and acknowledge.
-2. Ask THIS EXACT QUESTION next: "Is there anything you’re hoping to improve, or any challenges you’re running into right now?"
-`;
+            // STEP 1 VALIDATION
+            if (currentStep === 1) {
+                if (isUnintelligible(text)) {
+                    // Do not advance. Show error.
+                    setTimeout(() => {
+                        appendMessage("I'm sorry, I don’t understand… please input your answer again!", 'bot');
+                    }, 500);
+                    return;
+                }
+                // Valid -> Advance to 1.5
+                currentStep = 1.5;
+                setTimeout(() => appendMessage(FLOW_MESSAGES.STEP_1_5, 'bot'), 600);
+                return;
+            }
 
-                case 'CHALLENGES':
-                    // Current State: CHALLENGES (User just answered). Next State: DURATION.
-                    return prompt + `
-The user described their challenges: "${userText}".
-1. Mirror and acknowledge with empathy.
-2. Ask THIS EXACT QUESTION next: "How long has this been something you’ve been dealing with?"
-`;
+            // STEP 1.5 -> 2
+            if (currentStep === 1.5) {
+                currentStep = 2;
+                setTimeout(() => appendMessage(FLOW_MESSAGES.STEP_2, 'bot'), 600);
+                return;
+            }
 
-                case 'DURATION':
-                    // Current State: DURATION (User just answered). Next State: INVITE.
-                    return prompt + `
-The user answered how long: "${userText}".
-1. Summarize/Understand.
-2. Ask THIS EXACT QUESTION next: "Based on what you’ve shared, would you be opposed to a short meet-and-greet or connect call to see how we could possibly support you?"
-`;
+            // STEP 2 -> 3
+            if (currentStep === 2) {
+                currentStep = 3;
+                setTimeout(() => appendMessage(FLOW_MESSAGES.STEP_3, 'bot'), 600);
+                return;
+            }
 
-                case 'INVITE':
-                    // Current State: INVITE (User just answered Yes/No). Next State: BOOKED or TIPS.
-                    return prompt + `
-The user just responded to your invite request: "${userText}".
+            // STEP 3 -> 4
+            if (currentStep === 3) {
+                currentStep = 4;
+                setTimeout(() => appendMessage(FLOW_MESSAGES.STEP_4, 'bot'), 600);
+                return;
+            }
 
-IF SENTIMENT IS POSITIVE (Yes, Sure, OK, Maybe):
-- Respond with enthusiasm.
-- Tell them to book a time continuously.
-- Note: A link will be appended by the system, just provide the bridge text.
+            // STEP 4 -> 5
+            if (currentStep === 4) {
+                currentStep = 5;
+                setTimeout(() => appendMessage(FLOW_MESSAGES.STEP_5, 'bot'), 600);
+                return;
+            }
 
-IF SENTIMENT IS NEGATIVE (No, Busy, Later, Pass):
-- Say: "No problem at all — totally understand. Would you like some free marketing tips or ideas you can apply right away?"
-`;
+            // STEP 5 LOGIC
+            if (currentStep === 5) {
+                // Check if we are already waiting for the "Tips" reply (Negative Path sub-state)
+                if (isWaitingForTipsReply) {
+                    // User replied to "Would you like some free marketing tips?"
+                    // Regardless of answer -> Go to Step 6
+                    advanceToStep6();
+                    return;
+                }
 
-                case 'TIPS':
-                    return prompt + `
-The user wants marketing tips.
-CRITICAL RULES:
-- NEVER respond with filler like "I'm listening"
-- ALWAYS provide 2–3 concrete, actionable marketing insights based on their industry/challenges.
-- Tailor advice to "${conversationContext.company}".
-- End with ONE focused follow-up question.
-`;
+                // Check Sentiment of Invite Answer
+                const lower = text.toLowerCase();
+                const negativeWords = ['no', 'nope', 'pass', 'not now', 'busy', 'later', 'nah', 'don\'t', 'cant', 'can\'t'];
+                // distinct word check to avoid partial matches if needed, but 'includes' is usually sufficient for simple logic
+                const isNegative = negativeWords.some(w => lower.includes(w));
 
-                case 'BOOKED':
-                    return prompt + `User has booked or is in the booking phase. Be helpful if they ask more, but do not restart the Q&A flow.`;
-
-                default:
-                    return prompt + `Current state: ${state}. Be helpful and professional.`;
+                if (isNegative) {
+                    // Negative Path: Message -> Wait -> Step 6
+                    isWaitingForTipsReply = true;
+                    setTimeout(() => appendMessage(FLOW_MESSAGES.STEP_5_NEGATIVE, 'bot'), 600);
+                } else {
+                    // Positive (or ambiguous) Path: -> Step 6 immediately
+                    advanceToStep6();
+                }
+                return;
             }
         }
 
-        // State Transitions (STRICT LINEAR ADVANCEMENT)
-        function advanceState(currentState, userText) {
-            const lower = userText.toLowerCase();
-
-            switch (currentState) {
-                case 'GREETING':
-                    return 'COMPANY';
-
-                case 'COMPANY':
-                    return 'MARKETING';
-
-                case 'MARKETING':
-                    return 'CHALLENGES';
-
-                case 'CHALLENGES':
-                    return 'DURATION';
-
-                case 'DURATION':
-                    return 'INVITE';
-
-                case 'INVITE':
-                    // Here we need simple sentiment analysis to distinguish BOOKED vs TIPS
-                    // But we proceed EITHER WAY, never stay on INVITE.
-                    const negativeWords = ['no', 'nope', 'pass', 'not now', 'busy', 'later', 'nah', 'don\'t', 'cant'];
-                    const isNegative = negativeWords.some(w => lower.includes(w));
-
-                    if (isNegative) return 'TIPS';
-                    return 'BOOKED'; // Default to booked for "yes", "sure", or ambiguous positive flow
-
-                case 'TIPS':
-                    return 'BOOKED'; // Or END, effectively.
-
-                case 'BOOKED':
-                    return 'BOOKED';
-
-                default:
-                    return currentState;
-            }
+        function advanceToStep6() {
+            currentStep = 6;
+            setTimeout(() => {
+                appendMessage(FLOW_MESSAGES.STEP_6, 'bot');
+                appendButton('Grab a slot', 'https://calendly.com/socialtigermarketing/30min');
+                isFlowComplete = true; // Flow Ends
+            }, 600);
         }
 
-        // Local Fallback (For when API is skipped or fails)
-        function getLocalFallbackResponse(state, userText) {
-            // Logic: Provide the question for the *Next* state, assuming intelligible input.
-            const nextState = advanceState(state, userText);
+        // --- UI HELPERS ---
 
-            switch (nextState) {
-                case 'COMPANY':
-                    return "Before we dive in, can I ask — what do you do, or what does your company do?";
-
-                case 'MARKETING':
-                    return `Thanks for sharing. Out of curiosity, what are you currently using for your marketing?`;
-
-                case 'CHALLENGES':
-                    return `Got it. Is there anything you’re hoping to improve with that setup, or any challenges you’re running into right now?`;
-
-                case 'DURATION':
-                    return `I hear you. How long has this been something you’ve been dealing with?`;
-
-                case 'INVITE':
-                    return "Based on what you’ve shared, would you be opposed to a short meet-and-greet or connect call to see how we could possibly support you?";
-
-                case 'TIPS':
-                    return "No problem at all — totally understand. Would you like some free marketing tips or ideas you can apply right away?";
-
-                case 'BOOKED':
-                    // If coming from TIPS (wait, TIPS -> BOOKED is default flow?)
-                    // If coming from INVITE (Yes)
-                    return "Great! Please book some time with us here: https://calendly.com/socialtigermarketing/30min";
-
-                default:
-                    return "I'm here to help with any marketing questions you have.";
-            }
-        }
-
-        // Append Message to Chat Window
         function appendMessage(text, sender) {
             const div = document.createElement('div');
             div.classList.add('chat-msg', sender);
             // Auto-link URLs
             div.innerHTML = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color: inherit; text-decoration: underline;">$1</a>');
+            // Convert newlines to <br> for formatting
+            div.innerHTML = div.innerHTML.replace(/\n/g, '<br>');
+
             chatbotBody.appendChild(div);
+            scrollBottom();
+        }
+
+        function appendButton(label, url) {
+            const container = document.createElement('div');
+            container.style.textAlign = 'center';
+            container.style.marginTop = '10px';
+            container.style.marginBottom = '10px';
+
+            const btn = document.createElement('a');
+            btn.href = url;
+            btn.target = '_blank';
+            btn.textContent = label;
+
+            // Match website brand style (assuming 'btn-primary' exists or manual style)
+            btn.className = 'btn btn-primary';
+            btn.style.display = 'inline-block';
+            btn.style.padding = '10px 20px';
+            btn.style.textDecoration = 'none';
+            btn.style.borderRadius = '5px';
+            btn.style.fontSize = '14px';
+            // Fallback colors if class doesn't load right
+            if (!btn.classList.contains('btn-primary')) {
+                btn.style.backgroundColor = '#ff6b00';
+                btn.style.color = '#fff';
+            }
+
+            container.appendChild(btn);
+            chatbotBody.appendChild(container);
+            scrollBottom();
+        }
+
+        function scrollBottom() {
             chatbotBody.scrollTop = chatbotBody.scrollHeight;
         }
 
-        // Send Message
-        async function sendMessage() {
-            const text = chatbotInput.value.trim();
-            if (!text) return;
-
-            // 0. Hard Guard: No Contact Info
-            if (/(email|e-mail|phone|number|contact me)/i.test(text)) {
-                appendMessage(
-                    "Just to clarify — I don’t collect contact details here. I’m happy to help directly in this chat though.",
-                    'bot'
-                );
-                chatbotInput.value = '';
-                return;
-            }
-
-            // 1. Show User Message
-            appendMessage(text, 'user');
-            chatbotInput.value = '';
-
-            // 2. Validate Intelligibility (Global Gatekeeper)
-            if (!validateIntelligibility(text)) {
-                setTimeout(() => {
-                    appendMessage("Sorry — I didn’t quite understand you. Could you please input that again?", 'bot');
-                }, 500);
-                return; // STOP. Do not advance state. Do not hit API.
-            }
-
-            // 3. Show Loading Indicator
+        async function sendToApi(userText) {
+            // Show Loading
             const loadingDiv = document.createElement('div');
             loadingDiv.classList.add('chat-msg', 'bot');
             loadingDiv.textContent = '...';
             chatbotBody.appendChild(loadingDiv);
-            chatbotBody.scrollTop = chatbotBody.scrollHeight;
+            scrollBottom();
 
             try {
-                // 4. Prepare Prompt using CURRENT state
-                const systemInstruction = getSystemPrompt(chatState, text);
-
-                // CRITICAL FIX #1: VALID PAYLOAD ONLY (No History)
                 const messagesToSend = [
-                    { role: 'system', content: systemInstruction },
-                    { role: 'user', content: text }
+                    { role: 'system', content: SYSTEM_IDENTITY },
+                    { role: 'user', content: userText }
                 ];
 
-                // 5. Call API
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        messages: messagesToSend
-                    })
+                    body: JSON.stringify({ messages: messagesToSend })
                 });
 
-                if (!response.ok) throw new Error('API Request Failed');
-
-                const data = await response.json();
-
-                // Remove Loading
                 if (loadingDiv.parentNode) chatbotBody.removeChild(loadingDiv);
 
+                if (!response.ok) throw new Error('API Request Failed');
+                const data = await response.json();
+
                 if (data.choices && data.choices[0] && data.choices[0].message) {
-                    const aiResponse = data.choices[0].message.content;
-
-                    // Show Bot Response
-                    appendMessage(aiResponse, 'bot');
-
-                    // CRITICAL FIX #2: ADVANCE STATE ONLY AFTER SUCCESS
-                    // Update Context based on what the user JUST answered (captured in 'text')
-                    if (chatState === 'COMPANY') conversationContext.company = text;
-                    if (chatState === 'MARKETING') conversationContext.marketing = text;
-                    if (chatState === 'CHALLENGES') conversationContext.challenges = text;
-                    if (chatState === 'DURATION') conversationContext.duration = text;
-
-                    // Calculate Next State
-                    const nextState = advanceState(chatState, text);
-
-                    // Update internal state
-                    const prevState = chatState;
-                    chatState = nextState;
-
-                    // Post-Response Logic: Append Link if we just moved to BOOKED from INVITE
-                    if (chatState === 'BOOKED' && prevState === 'INVITE') {
-                        if (!aiResponse.includes('calendly.com')) {
-                            appendMessage("Great! Please book some time with us here: https://calendly.com/socialtigermarketing/30min", 'bot');
-                        }
-                    }
+                    appendMessage(data.choices[0].message.content, 'bot');
                 } else {
-                    console.error("Invalid response structure:", data);
-                    // If API returns success but no content, fallback gracefully?
-                    // For now, let's treat it as an error to be safe or use fallback.
-                    throw new Error('Invalid API Response Structure');
+                    appendMessage("I'm having trouble connecting right now. Please try again.", 'bot');
                 }
 
             } catch (error) {
-                console.error('Chatbot Error (Using Fallback):', error);
+                console.error(error);
                 if (loadingDiv.parentNode) chatbotBody.removeChild(loadingDiv);
-
-                // Fallback: Use local script logic to keep flow alive
-                const fallbackResponse = getLocalFallbackResponse(chatState, text);
-                appendMessage(fallbackResponse, 'bot');
-
-                // Advance State (Simulate Success) to prevent loop
-                if (chatState === 'COMPANY') conversationContext.company = text;
-                if (chatState === 'MARKETING') conversationContext.marketing = text;
-                if (chatState === 'CHALLENGES') conversationContext.challenges = text;
-                if (chatState === 'DURATION') conversationContext.duration = text;
-
-                chatState = advanceState(chatState, text);
+                appendMessage("I'm having a bit of trouble connecting. Please try again later.", 'bot');
             }
         }
 
+        // Event Listeners
         if (chatbotSend && chatbotInput) {
-            chatbotSend.addEventListener('click', sendMessage);
+            chatbotSend.addEventListener('click', handleUserMessage);
             chatbotInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') sendMessage();
+                if (e.key === 'Enter') handleUserMessage();
             });
         }
     }
-
-    // Lead Form Handler (Form removed)
-    // const form = document.getElementById('leadForm');
-    // ...
 
     // Scroll-based fade-in animation
     if ('IntersectionObserver' in window) {
         const observerOptions = {
             threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px' // Slightly offset trigger point
+            rootMargin: '0px 0px -50px 0px'
         };
 
         const observer = new IntersectionObserver((entries, observerInstance) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('is-visible');
-                    observerInstance.unobserve(entry.target); // Trigger once
+                    observerInstance.unobserve(entry.target);
                 }
             });
         }, observerOptions);
 
-        // Enable animations only if IO is supported
         document.body.classList.add('js-scroll-anim-enabled');
-
-        // Observe all elements with the fade-in-up class
         document.querySelectorAll('.fade-in-up').forEach(element => {
             observer.observe(element);
         });
