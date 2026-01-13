@@ -17,8 +17,8 @@
                 btn.addEventListener("click", function () {
                     gtag("event", "calendly_click", {
                         event_category: "engagement",
-                        event_label: "Calendly Booking Button",
-                        value: 1
+                        event_label: btn.textContent.trim(),
+                        transport_type: "beacon"
                     });
                 });
             });
