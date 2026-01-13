@@ -353,4 +353,35 @@ You are helpful, professional, and concise.`;
         });
     }
 
+    // --- GA4 EVENT TRACKING ---
+
+    // 1. Calendly Button Clicks
+    const calendlyButtons = document.querySelectorAll('.track-calendly');
+    calendlyButtons.forEach(btn => {
+        btn.addEventListener('click', function () {
+            if (typeof gtag === 'function') {
+                gtag('event', 'calendly_click', {
+                    'event_category': 'engagement',
+                    'event_label': this.textContent.trim(),
+                    'transport_type': 'beacon'
+                });
+            } else {
+                console.warn('Google Analytics (gtag) not loaded.');
+            }
+        });
+    });
+
+    // 2. Chatbot Opened
+    // Note: 'chatbotToggle' is already defined above (line 52)
+    if (chatbotToggle) {
+        chatbotToggle.addEventListener('click', function () {
+            if (typeof gtag === 'function') {
+                gtag('event', 'chatbot_opened', {
+                    'event_category': 'engagement',
+                    'event_label': 'Chatbot Opened'
+                });
+            }
+        });
+    }
+
 });

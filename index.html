@@ -11,32 +11,6 @@
 
         gtag('config', 'G-3MRHMFE947');
     </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".track-calendly").forEach(function (btn) {
-                btn.addEventListener("click", function () {
-                    gtag("event", "calendly_click", {
-                        event_category: "engagement",
-                        event_label: btn.textContent.trim(),
-                        transport_type: "beacon"
-                    });
-                });
-            });
-        });
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const chatbotToggle = document.getElementById("chatbot-toggle");
-            if (chatbotToggle) {
-                chatbotToggle.addEventListener("click", function () {
-                    gtag("event", "chatbot_opened", {
-                        event_category: "engagement",
-                        event_label: "Chatbot Opened"
-                    });
-                });
-            }
-        });
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Social Tiger | LinkedIn Growth & Social Media Systems</title>
