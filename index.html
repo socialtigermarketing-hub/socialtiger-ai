@@ -11,6 +11,32 @@
 
         gtag('config', 'G-3MRHMFE947');
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".track-calendly").forEach(function (btn) {
+                btn.addEventListener("click", function () {
+                    gtag("event", "calendly_click", {
+                        event_category: "engagement",
+                        event_label: "Calendly Booking Button",
+                        value: 1
+                    });
+                });
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const chatbotToggle = document.getElementById("chatbot-toggle");
+            if (chatbotToggle) {
+                chatbotToggle.addEventListener("click", function () {
+                    gtag("event", "chatbot_opened", {
+                        event_category: "engagement",
+                        event_label: "Chatbot Opened"
+                    });
+                });
+            }
+        });
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Social Tiger | LinkedIn Growth & Social Media Systems</title>
@@ -103,7 +129,8 @@
                     <li><a href="#about"><span>About</span></a></li>
                     <li><a href="#services"><span>Services</span></a></li>
                     <li><a href="#proof"><span>Results</span></a></li>
-                    <li><a href="https://calendly.com/socialtigermarketing/30min" class="btn btn-primary">Book a
+                    <li><a href="https://calendly.com/socialtigermarketing/30min"
+                            class="btn btn-primary track-calendly">Book a
                             Call</a></li>
                 </ul>
             </div>
@@ -120,7 +147,8 @@
                 <p class="hero-subtitle">We help founders build authority, automate lead qualification, and generate
                     high-value opportunities using proven LinkedIn and social media strategies.</p>
                 <div class="hero-cta-group">
-                    <a href="https://calendly.com/socialtigermarketing/30min" class="btn btn-primary btn-lg">Book a
+                    <a href="https://calendly.com/socialtigermarketing/30min"
+                        class="btn btn-primary btn-lg track-calendly">Book a
                         Growth Call</a>
                     <a href="#services" class="btn btn-outline btn-lg">Get Started</a>
                 </div>
@@ -438,7 +466,7 @@
             <div class="container">
                 <h2>Ready to Scale Your Authority?</h2>
                 <p>Stop relying on luck. Start building a predictable revenue engine today.</p>
-                <a href="https://calendly.com/socialtigermarketing/30min" class="btn btn-primary btn-lg"
+                <a href="https://calendly.com/socialtigermarketing/30min" class="btn btn-primary btn-lg track-calendly"
                     style="margin-top: 2rem;">Book Your Strategy Call</a>
             </div>
         </section>
