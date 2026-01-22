@@ -118,6 +118,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 mainContent.innerHTML = privacyContent;
                 window.scrollTo(0, 0);
+
+                // --- Navigation Replacement Logic ---
+                const navLinks = document.querySelector('.nav-links');
+                const navContainer = document.querySelector('.nav-container');
+
+                if (navLinks && navContainer) {
+                    navLinks.style.display = 'none';
+
+                    const backBtn = document.createElement('a');
+                    backBtn.href = 'https://www.thesocialtiger.com';
+                    backBtn.className = 'btn btn-primary';
+                    backBtn.textContent = 'Go Back to Home Page';
+
+                    // Ensure it looks good on mobile/desktop by appending it to container
+                    navContainer.appendChild(backBtn);
+                }
             }
         });
     }
