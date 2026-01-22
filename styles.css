@@ -855,7 +855,8 @@ h4 {
     .footer-content {
         flex-direction: column;
         gap: 1rem;
-        text-align: center;
+        text-align: left;
+        align-items: flex-start;
     }
 
     .footer-links a {
