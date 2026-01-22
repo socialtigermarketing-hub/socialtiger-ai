@@ -1,5 +1,127 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- PRIVACY POLICY LOGIC ---
+    const privacyLink = document.getElementById('privacy-policy-link');
+    if (privacyLink) {
+        privacyLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const mainContent = document.querySelector('main');
+            if (mainContent) {
+                // Privacy Policy Content
+                const privacyContent = `
+                    <section class="section" style="padding: 4rem 0;">
+                        <div class="container">
+                            <h1>Privacy Notice – The Social Tiger</h1>
+                            <p><strong>Last updated: Jan 2026</strong></p>
+                            <br>
+
+                            <h2>1. Who we are</h2>
+                            <p>The Social Tiger (“we”, “us”, “our”) provides social media marketing and lead generation services for businesses.</p>
+                            <p><strong>Company name:</strong> The Social Tiger<br>
+                            <strong>Website:</strong> <a href="https://thesocialtiger.com">https://thesocialtiger.com</a><br>
+                            <strong>Email:</strong> <a href="mailto:Mark@thesocialtiger.com">Mark@thesocialtiger.com</a></p>
+                            <br>
+
+                            <h2>2. What data we collect</h2>
+                            <p>We may collect and process the following business-related personal data:</p>
+                            <ul>
+                                <li>Name</li>
+                                <li>Job title</li>
+                                <li>Company name</li>
+                                <li>Work email address</li>
+                                <li>LinkedIn profile</li>
+                                <li>Any information you provide when contacting us</li>
+                            </ul>
+                            <p>We do not intentionally collect personal or sensitive data.</p>
+                            <br>
+
+                            <h2>3. How we collect your data</h2>
+                            <p>We collect data when:</p>
+                            <ul>
+                                <li>You visit our website</li>
+                                <li>You contact us via email or forms</li>
+                                <li>We identify relevant business contacts via public sources (e.g. LinkedIn or company websites)</li>
+                                <li>You engage with our content or outreach</li>
+                            </ul>
+                            <br>
+
+                            <h2>4. Why we process your data</h2>
+                            <p>We process personal data to:</p>
+                            <ul>
+                                <li>Respond to enquiries</li>
+                                <li>Provide our services</li>
+                                <li>Conduct B2B outreach where relevant</li>
+                                <li>Improve our marketing and website</li>
+                                <li>Maintain business relationships</li>
+                            </ul>
+                            <br>
+
+                            <h2>5. Lawful basis for processing</h2>
+                            <p>Under UK GDPR, our lawful bases are:</p>
+                            <ul>
+                                <li><strong>Legitimate interest</strong> – for B2B outreach and business communications</li>
+                                <li><strong>Consent</strong> – where you have explicitly opted in</li>
+                                <li><strong>Contract</strong> – where services are provided</li>
+                            </ul>
+                            <p>You can object to processing at any time.</p>
+                            <br>
+
+                            <h2>6. B2B email outreach</h2>
+                            <p>We may contact business professionals using work email addresses where we believe our services are relevant.</p>
+                            <p>Every email includes:</p>
+                            <ul>
+                                <li>Our identity</li>
+                                <li>A clear purpose</li>
+                                <li>A simple opt-out option</li>
+                            </ul>
+                            <p>If you ask us to stop, we will do so immediately.</p>
+                            <br>
+
+                            <h2>7. How we store and protect data</h2>
+                            <ul>
+                                <li>Data is stored securely</li>
+                                <li>Access is limited</li>
+                                <li>We only keep data for as long as necessary</li>
+                                <li>If no engagement occurs, data is typically deleted after 6–12 months.</li>
+                            </ul>
+                            <br>
+
+                            <h2>8. Who we share data with</h2>
+                            <p>We may share data with trusted service providers (e.g. CRM, email or analytics tools) strictly for business operations.</p>
+                            <p>We never sell personal data.</p>
+                            <br>
+
+                            <h2>9. Your rights</h2>
+                            <p>You have the right to:</p>
+                            <ul>
+                                <li>Access your data</li>
+                                <li>Correct inaccurate data</li>
+                                <li>Request deletion</li>
+                                <li>Object to processing</li>
+                                <li>Withdraw consent</li>
+                            </ul>
+                            <p>To exercise your rights, email: <a href="mailto:mark@thesocialtiger.com">mark@thesocialtiger.com</a></p>
+                            <br>
+
+                            <h2>10. Complaints</h2>
+                            <p>If you are unhappy with how we handle your data, you can complain to:</p>
+                            <p><strong>Information Commissioner’s Office (ICO)</strong><br>
+                            Website: <a href="https://ico.org.uk">https://ico.org.uk</a></p>
+                            <br>
+
+                            <h2>11. Changes to this notice</h2>
+                            <p>We may update this privacy notice from time to time.<br>
+                            The latest version will always appear on this page.</p>
+                        </div>
+                    </section>
+                `;
+
+                mainContent.innerHTML = privacyContent;
+                window.scrollTo(0, 0);
+            }
+        });
+    }
+
     // Mobile Navigation Toggle
     const mobileBtn = document.querySelector('.mobile-menu-btn');
     const navLinks = document.querySelector('.nav-links');
@@ -384,126 +506,6 @@ You are helpful, professional, and concise.`;
         });
     }
 
-    // --- PRIVACY POLICY LOGIC ---
-    const privacyLink = document.getElementById('privacy-policy-link');
-    if (privacyLink) {
-        privacyLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            const mainContent = document.querySelector('main');
-            if (mainContent) {
-                // Privacy Policy Content
-                const privacyContent = `
-                    <section class="section" style="padding: 4rem 0;">
-                        <div class="container">
-                            <h1>Privacy Notice – The Social Tiger</h1>
-                            <p><strong>Last updated: Jan 2026</strong></p>
-                            <br>
 
-                            <h2>1. Who we are</h2>
-                            <p>The Social Tiger (“we”, “us”, “our”) provides social media marketing and lead generation services for businesses.</p>
-                            <p><strong>Company name:</strong> The Social Tiger<br>
-                            <strong>Website:</strong> <a href="https://thesocialtiger.com">https://thesocialtiger.com</a><br>
-                            <strong>Email:</strong> <a href="mailto:Mark@thesocialtiger.com">Mark@thesocialtiger.com</a></p>
-                            <br>
-
-                            <h2>2. What data we collect</h2>
-                            <p>We may collect and process the following business-related personal data:</p>
-                            <ul>
-                                <li>Name</li>
-                                <li>Job title</li>
-                                <li>Company name</li>
-                                <li>Work email address</li>
-                                <li>LinkedIn profile</li>
-                                <li>Any information you provide when contacting us</li>
-                            </ul>
-                            <p>We do not intentionally collect personal or sensitive data.</p>
-                            <br>
-
-                            <h2>3. How we collect your data</h2>
-                            <p>We collect data when:</p>
-                            <ul>
-                                <li>You visit our website</li>
-                                <li>You contact us via email or forms</li>
-                                <li>We identify relevant business contacts via public sources (e.g. LinkedIn or company websites)</li>
-                                <li>You engage with our content or outreach</li>
-                            </ul>
-                            <br>
-
-                            <h2>4. Why we process your data</h2>
-                            <p>We process personal data to:</p>
-                            <ul>
-                                <li>Respond to enquiries</li>
-                                <li>Provide our services</li>
-                                <li>Conduct B2B outreach where relevant</li>
-                                <li>Improve our marketing and website</li>
-                                <li>Maintain business relationships</li>
-                            </ul>
-                            <br>
-
-                            <h2>5. Lawful basis for processing</h2>
-                            <p>Under UK GDPR, our lawful bases are:</p>
-                            <ul>
-                                <li><strong>Legitimate interest</strong> – for B2B outreach and business communications</li>
-                                <li><strong>Consent</strong> – where you have explicitly opted in</li>
-                                <li><strong>Contract</strong> – where services are provided</li>
-                            </ul>
-                            <p>You can object to processing at any time.</p>
-                            <br>
-
-                            <h2>6. B2B email outreach</h2>
-                            <p>We may contact business professionals using work email addresses where we believe our services are relevant.</p>
-                            <p>Every email includes:</p>
-                            <ul>
-                                <li>Our identity</li>
-                                <li>A clear purpose</li>
-                                <li>A simple opt-out option</li>
-                            </ul>
-                            <p>If you ask us to stop, we will do so immediately.</p>
-                            <br>
-
-                            <h2>7. How we store and protect data</h2>
-                            <ul>
-                                <li>Data is stored securely</li>
-                                <li>Access is limited</li>
-                                <li>We only keep data for as long as necessary</li>
-                                <li>If no engagement occurs, data is typically deleted after 6–12 months.</li>
-                            </ul>
-                            <br>
-
-                            <h2>8. Who we share data with</h2>
-                            <p>We may share data with trusted service providers (e.g. CRM, email or analytics tools) strictly for business operations.</p>
-                            <p>We never sell personal data.</p>
-                            <br>
-
-                            <h2>9. Your rights</h2>
-                            <p>You have the right to:</p>
-                            <ul>
-                                <li>Access your data</li>
-                                <li>Correct inaccurate data</li>
-                                <li>Request deletion</li>
-                                <li>Object to processing</li>
-                                <li>Withdraw consent</li>
-                            </ul>
-                            <p>To exercise your rights, email: <a href="mailto:mark@thesocialtiger.com">mark@thesocialtiger.com</a></p>
-                            <br>
-
-                            <h2>10. Complaints</h2>
-                            <p>If you are unhappy with how we handle your data, you can complain to:</p>
-                            <p><strong>Information Commissioner’s Office (ICO)</strong><br>
-                            Website: <a href="https://ico.org.uk">https://ico.org.uk</a></p>
-                            <br>
-
-                            <h2>11. Changes to this notice</h2>
-                            <p>We may update this privacy notice from time to time.<br>
-                            The latest version will always appear on this page.</p>
-                        </div>
-                    </section>
-                `;
-
-                mainContent.innerHTML = privacyContent;
-                window.scrollTo(0, 0);
-            }
-        });
-    }
 
 });
