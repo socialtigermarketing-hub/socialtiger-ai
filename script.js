@@ -120,21 +120,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.scrollTo(0, 0);
 
                 // --- Navigation Replacement Logic ---
-                // 1. Hide Nav Links (Desktop)
-                const navLinks = document.querySelector('.nav-links');
-                if (navLinks) {
-                    navLinks.style.setProperty('display', 'none', 'important');
-                } else {
-                    console.error('Privacy Policy: .nav-links not found');
-                }
+                // 1. Toggle Privacy Mode Class
+                document.body.classList.add('privacy-active');
 
-                // 2. Hide Mobile Button (Mobile)
-                const mobileBtn = document.querySelector('.mobile-menu-btn');
-                if (mobileBtn) {
-                    mobileBtn.style.setProperty('display', 'none', 'important');
-                }
-
-                // 3. Add Back Button
+                // 2. Add Back Button (Logic remains same)
                 const navContainer = document.querySelector('.nav-container');
                 if (navContainer) {
                     // Prevent duplicates

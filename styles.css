@@ -891,3 +891,11 @@ h4 {
 .js-scroll-anim-enabled .delay-300 {
     transition-delay: 0.3s;
 }
+
+/* =========================================
+   12. Privacy Mode Utilities
+   ========================================= */
+body.privacy-active .nav-links,
+body.privacy-active .mobile-menu-btn {
+    display: none !important;
+}
