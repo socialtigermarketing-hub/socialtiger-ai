@@ -120,19 +120,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.scrollTo(0, 0);
 
                 // --- Navigation Replacement Logic ---
+                // 1. Hide Nav Links (Desktop)
                 const navLinks = document.querySelector('.nav-links');
+                if (navLinks) {
+                    navLinks.style.setProperty('display', 'none', 'important');
+                } else {
+                    console.error('Privacy Policy: .nav-links not found');
+                }
+
+                // 2. Hide Mobile Button (Mobile)
+                const mobileBtn = document.querySelector('.mobile-menu-btn');
+                if (mobileBtn) {
+                    mobileBtn.style.setProperty('display', 'none', 'important');
+                }
+
+                // 3. Add Back Button
                 const navContainer = document.querySelector('.nav-container');
+                if (navContainer) {
+                    // Prevent duplicates
+                    if (!document.getElementById('privacy-back-btn')) {
+                        const backBtn = document.createElement('a');
+                        backBtn.id = 'privacy-back-btn';
+                        backBtn.href = 'https://www.thesocialtiger.com';
+                        backBtn.className = 'btn btn-primary';
+                        backBtn.textContent = 'Go Back to Home Page';
 
-                if (navLinks && navContainer) {
-                    navLinks.style.display = 'none';
-
-                    const backBtn = document.createElement('a');
-                    backBtn.href = 'https://www.thesocialtiger.com';
-                    backBtn.className = 'btn btn-primary';
-                    backBtn.textContent = 'Go Back to Home Page';
-
-                    // Ensure it looks good on mobile/desktop by appending it to container
-                    navContainer.appendChild(backBtn);
+                        // Append to container
+                        navContainer.appendChild(backBtn);
+                    }
+                } else {
+                    console.error('Privacy Policy: .nav-container not found');
                 }
             }
         });
