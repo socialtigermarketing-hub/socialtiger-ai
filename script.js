@@ -146,8 +146,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- TERMS OF SERVICE LOGIC ---
     const termsLink = document.getElementById('terms-of-service-link');
+    console.log('Terms Link Element:', termsLink); // Debug log
+
     if (termsLink) {
         termsLink.addEventListener('click', (e) => {
+            console.log('Terms of Service clicked'); // Debug log
             e.preventDefault();
             const mainContent = document.querySelector('main');
             if (mainContent) {
