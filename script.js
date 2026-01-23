@@ -144,6 +144,99 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- TERMS OF SERVICE LOGIC ---
+    const termsLink = document.getElementById('terms-of-service-link');
+    if (termsLink) {
+        termsLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const mainContent = document.querySelector('main');
+            if (mainContent) {
+                const termsContent = `
+                    <section class="section" style="padding: 4rem 0;">
+                        <div class="container">
+                            <h1>Terms of Service – The Social Tiger</h1>
+                            <p><strong>Effective Date: January 2026</strong></p>
+                            <br>
+                            <p>Welcome to The Social Tiger.</p>
+                            <p>By using our website and services, you agree to the following terms. Please read them carefully.</p>
+                            <br>
+
+                            <h2>1. Services</h2>
+                            <p>The Social Tiger provides marketing services aimed at increasing awareness and engagement for your business. All services are provided on a best-efforts basis. While we strive to deliver quality marketing, we do not guarantee specific results, sales, or revenue.</p>
+                            <br>
+
+                            <h2>2. Payments</h2>
+                            <p>Payments for services are processed via Stripe. All fees are exclusive of VAT unless otherwise stated.</p>
+                            <p>Payments are generally non-refundable.</p>
+                            <p>Refunds may be considered on a case-by-case basis, at our sole discretion.</p>
+                            <p>You are responsible for providing accurate payment details.</p>
+                            <br>
+
+                            <h2>3. Use of Our Services</h2>
+                            <p>By using The Social Tiger services, you agree to:</p>
+                            <ul>
+                                <li>Provide accurate and complete information for marketing purposes.</li>
+                                <li>Refrain from using our services for illegal, fraudulent, or harmful activities.</li>
+                                <li>Not attempt to gain unauthorized access to our systems or data.</li>
+                            </ul>
+                            <br>
+
+                            <h2>4. Intellectual Property</h2>
+                            <p>All content, materials, designs, and marketing assets created by The Social Tiger remain our intellectual property until full payment is received. After payment, you receive a license to use the deliverables for your intended marketing purposes.</p>
+                            <br>
+
+                            <h2>5. Limitation of Liability</h2>
+                            <p>To the fullest extent permitted by law:</p>
+                            <p>The Social Tiger is not liable for any indirect, incidental, or consequential losses, including loss of revenue, profit, or business opportunities.</p>
+                            <p>Our total liability for any claim arising from our services is limited to the fees you paid for the service in question.</p>
+                            <br>
+
+                            <h2>6. Termination</h2>
+                            <p>We reserve the right to suspend or terminate services if:</p>
+                            <ul>
+                                <li>Payment is not received.</li>
+                                <li>You breach these Terms.</li>
+                                <li>You engage in unlawful or harmful activities.</li>
+                            </ul>
+                            <br>
+
+                            <h2>7. Governing Law</h2>
+                            <p>These Terms are governed by the laws of England and Wales. Any disputes will be resolved in the courts of England and Wales.</p>
+                            <br>
+
+                            <h2>8. Changes to Terms</h2>
+                            <p>We may update these Terms from time to time. The latest version will always be posted on our website. Continued use of our services after changes constitutes acceptance of the updated Terms.</p>
+                            <br>
+
+                            <h2>9. Contact</h2>
+                            <p>For any questions regarding these Terms, please contact:</p>
+                            <p>Email: <a href="mailto:Mark@thesocialtiger.com">Mark@thesocialtiger.com</a></p>
+                            <p>Address: 71-75 Shelton Street, Covent Garden, London, UK, WC2H 9JQ</p>
+                        </div>
+                    </section>
+                `;
+
+                mainContent.innerHTML = termsContent;
+                window.scrollTo(0, 0);
+
+                // --- Navigation Replacement Logic (Shared) ---
+                document.body.classList.add('privacy-active');
+
+                const navContainer = document.querySelector('.nav-container');
+                if (navContainer) {
+                    if (!document.getElementById('privacy-back-btn')) {
+                        const backBtn = document.createElement('a');
+                        backBtn.id = 'privacy-back-btn';
+                        backBtn.href = 'https://www.thesocialtiger.com';
+                        backBtn.className = 'btn btn-primary';
+                        backBtn.textContent = 'Go Back to Home Page';
+                        navContainer.appendChild(backBtn);
+                    }
+                }
+            }
+        });
+    }
+
     // Mobile Navigation Toggle
     const mobileBtn = document.querySelector('.mobile-menu-btn');
     const navLinks = document.querySelector('.nav-links');
