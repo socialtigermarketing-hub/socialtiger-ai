@@ -308,13 +308,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const FLOW_MESSAGES = {
             STEP_1: `Hi, I’m The Social Tiger’s AI Assistant.
 
-The Social Tiger helps businesses grow through:
+The Social Tiger helps businesses grow through the: 
 
-1️⃣ LinkedIn & Social Media Organic Growth — using strategic ghostwritten content to stimulate inbound interest, targeted outbound connections to reach the right audience, and DM inbox management focused on booking qualified calls.
+1. Pipeline Predator™
+Email Marketing Only
 
-2️⃣ Warm & Cold Strategic Email Campaigns — designed to generate consistent inbound interest and predictable conversations without spamming or burning your list.
+2. Authority Social Engine™
+LinkedIn and Social Media Only
 
-3️⃣ High-Converting Website Creation or Upgrades — with clear positioning, better conversion paths, and an AI chatbot that handles inbound inquiries instantly so you don’t have to.
+3. Authority Predator System™
+Combined Multi-Channel
 
 How may I assist you today?`,
 
