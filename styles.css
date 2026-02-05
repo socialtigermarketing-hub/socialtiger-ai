@@ -909,6 +909,35 @@ h4 {
 }
 
 /* =========================================
+   13. Workshop List Layout (Why This Workshop Exists)
+   ========================================= */
+.workshop-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.workshop-list-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xs) 0;
+    text-align: left;
+}
+
+.workshop-list-item .icon-box {
+    margin-bottom: 0;
+    flex-shrink: 0;
+}
+
+.workshop-list-item p {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* =========================================
    12. Privacy Mode Utilities
    ========================================= */
 body.privacy-active .nav-links,
