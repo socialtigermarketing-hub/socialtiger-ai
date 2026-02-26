@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3MRHMFE947"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-3MRHMFE947', { 'debug_mode': true });
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn Profile Optimization Guide for B2B Founders</title>
+    <meta name="description"
+        content="A practical LinkedIn profile optimization guide for B2B founders and service businesses. Improve positioning, authority and conversions.">
+    <meta name="robots" content="index, follow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Favicon placeholder -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐯</text></svg>">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "LinkedIn Profile Optimization Guide for B2B Founders",
+      "description": "A practical LinkedIn profile optimization guide for B2B founders and service businesses. Improve positioning, authority and conversions.",
+      "author": {
+        "@type": "Organization",
+        "name": "The Social Tiger",
+        "url": "https://thesocialtiger.com"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "The Social Tiger",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://thesocialtiger.com/assets/images/social-tiger-logo.png"
+        }
+      },
+      "url": "https://thesocialtiger.com/linkedin-profile-optimization-guide"
+    }
+    </script>
+
+    <!-- Custom Styles for this page to match exact requests -->
+    <style>
+        .checklist-item {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .checklist-item::before {
+            content: "✓";
+            color: var(--color-primary);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .animated-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+            margin: var(--spacing-md) auto;
+            width: 0;
+            transition: width 1s ease-out;
+        }
+
+        .animated-divider.is-visible {
+            width: 80%;
+        }
+
+        .founder-inline-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--color-primary);
+            margin: 0 10px;
+        }
+
+        .founder-about-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: var(--color-bg-card);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--color-border);
+        }
+
+        .speaking-img {
+            max-width: 100%;
+            border-radius: var(--border-radius);
+            margin-top: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--color-border);
+        }
+
+        .guide-card {
+            background-color: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: var(--spacing-md);
+            transition: var(--transition);
+        }
+
+        .guide-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--color-primary);
+            box-shadow: 0 10px 30px rgba(255, 165, 0, 0.1);
+        }
+
+        .guide-card h2 {
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            color: var(--color-primary);
+        }
+
+        .guide-faq {
+            margin-bottom: 1.5rem;
+        }
+
+        .guide-faq strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        .guide-faq p {
+            color: var(--color-text-muted);
+        }
+
+        /* Summary Grid */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .summary-box h3 {
+            color: var(--color-primary);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .bg-light-tone {
+            background-color: var(--color-bg-alt);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <header>
+        <nav class="navbar">
+            <div class="container nav-container">
+                <div class="logo-wrapper">
+                    <a href="index.html" class="logo">
+                        <img src="assets/images/social-tiger-logo.png" alt="The Social Tiger - Social Media Growth"
+                            class="logo-image">
+                    </a>
+                </div>
+                <button class="mobile-menu-btn" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-links">
+                    <li><a href="index.html"><span>Home</span></a></li>
+                    <li><a href="index.html#services"><span>Services</span></a></li>
+                    <li><a href="linkedinleadgenworkshop.html"><span>Linkedin Quality Lead Workshop</span></a></li>
+                    <li><a href="https://calendly.com/socialtigermarketing/30min"
+                            class="btn btn-primary track-calendly">Let's Connect Here</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- 1. HERO SECTION -->
+        <section class="hero-section text-center">
+            <div class="container hero-content fade-in-up"
+                style="max-width: 1000px; margin: 0 auto; text-align: center;">
+                <h1 class="hero-title" style="font-size: 3.5rem;">LinkedIn Profile <span
+                        class="text-primary">Optimisation</span></h1>
+                <div class="hero-subtitle mx-auto" style="text-align: center; max-width: 800px; margin: 0 auto;">
+                    <p
+                        style="font-size: 1.5rem; font-weight: 600; color: #fff; margin-bottom: 1.5rem; text-align: center; margin-left: auto; margin-right: auto;">
+                        Your LinkedIn
+                        profile is a <span class="text-primary">conversion asset</span> or your <span
+                            class="text-primary">missed daily opportunities</span></p>
+                    <p style="margin-bottom: 1rem; text-align: center; margin-left: auto; margin-right: auto;">LinkedIn
+                        can be a powerful tool for B2B founders
+                        and service
+                        businesses. Only if you know what you are doing and follow a <span
+                            class="text-primary">data-backed approach</span> will it
+                        deliver results.</p>
+                    <p
+                        style="font-style: italic; font-weight: 600; color: var(--color-primary); text-align: center; margin-left: auto; margin-right: auto;">
+                        Want to <span class="text-primary"
+                            style="color: #fff; font-weight: 800; background-color: var(--color-primary); padding: 0 5px; border-radius: 4px;">nurture
+                            and
+                            convert</span> potential clients?</p>
+                </div>
+
+                <div class="founder-about-box fade-in-up delay-200">
+                    <h3
+                        style="width: 100%; text-transform: uppercase; font-size: 1rem; color: var(--color-text-muted); letter-spacing: 2px;">
+                        About Us</h3>
+                    <div style="display: flex; align-items: center; justify-content: center; margin: 1rem 0;">
+                        <img src="assets/images/founder-mark.png" alt="Mark Ramsey" class="founder-inline-img"
+                            loading="lazy">
+                        <img src="assets/images/founder-jordan.png" alt="Jordan Molina" class="founder-inline-img"
+                            style="object-position: 50% 35%;" loading="lazy">
+                    </div>
+                    <p style="max-width: 600px; margin: 0 auto;">We are Mark Ramsey and Jordan Molina of The Social
+                        Tiger, we have over 40+ years of experience combined in sales and marketing. We help founders
+                        scale their revenue predictably through proven organic search systems and targeted social
+                        selling without wasting time or ad budget.</p>
+                </div>
+            </div>
+            <div class="hero-overlay"></div>
+        </section>
+
+        <!-- 2. PROBLEM & OUTCOMES -->
+        <section class="section bg-light-tone">
+            <div class="container">
+                <div class="grid-2-col" style="align-items: center;">
+                    <div class="fade-in-up">
+                        <p style="font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--color-text-muted);">High
+                            engagement on posts alone does not guarantee <span class="text-primary">meaningful
+                                outcomes</span>. People may visit your
+                            profile if your content catches their attention, but interest alone will not grow your
+                            business or increase your influence.</p>
+
+                        <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem;">Ask yourself this: How can you turn
+                            profile visitors into <span class="text-primary">meaningful outcomes?</span></h2>
+
+                        <ul style="margin-bottom: 2rem;">
+                            <li class="checklist-item fade-in-up delay-100">Visitors &rarr; interested potential clients
+                            </li>
+                            <li class="checklist-item fade-in-up delay-100">Visitors &rarr; email subscribers for
+                                updates or offers</li>
+                            <li class="checklist-item fade-in-up delay-200">Visitors &rarr; inbound enquiries about your
+                                services</li>
+                            <li class="checklist-item fade-in-up delay-200">Visitors &rarr; clicks to your website or
+                                service pages</li>
+                            <li class="checklist-item fade-in-up delay-200">Visitors &rarr; booked discovery calls or
+                                consultations</li>
+                            <li class="checklist-item fade-in-up delay-200">Visitors &rarr; invitations to collaborate
+                                on projects</li>
+                            <li class="checklist-item fade-in-up delay-200">Visitors &rarr; speaking or thought
+                                leadership opportunities</li>
+                            <li class="checklist-item fade-in-up delay-200">Visitors &rarr; new paying clients</li>
+                        </ul>
+                    </div>
+                    <div class="fade-in-up delay-200 text-center">
+                        <img src="assets/images/speaking mark.png" alt="Mark Ramsey speaking event" class="speaking-img"
+                            loading="lazy">
+                        <p
+                            style="font-style: italic; font-size: 0.9rem; margin-top: 1rem; color: var(--color-text-muted); text-align: left;">
+                            "When our CEO, Mark Ramsey organised an AMAZING in person speaking function about
+                            storytelling with the top people in the UK on LinkedIn: Richard Moore, Lara Acosta, Ash
+                            Rathod, Geraldine Spurway and Izzy Prior all through the power of LinkedIn and an optimised
+                            profile.<br><br>
+                            Not to mention we raised thousands for a local charity!<br>
+                            Photo Credit: Wendy Gannon
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. GUIDE INTRO -->
+        <section class="section">
+            <div class="container text-center fade-in-up" style="max-width: 800px;">
+                <p style="font-size: 1.2rem; margin-bottom: 1rem;">This guide provides a checklist to <span
+                        class="text-primary">optimise your
+                        LinkedIn profile</span>, helping you achieve business objectives and <span
+                        class="text-primary">scale your conversion rate</span>
+                    efficiently.</p>
+                <p style="color: var(--color-text-muted);">There are more than 30 areas of your LinkedIn profile you
+                    could edit, adapt, and optimise. We have selected the top 6 that matter most for conversions. Work
+                    through each section and ask yourself the questions. If your answer is "no," you know exactly what
+                    to improve.</p>
+
+                <div class="animated-divider fade-in-up delay-100"></div>
+            </div>
+        </section>
+
+        <!-- THE 6 SECTIONS -->
+        <section class="section" style="padding-top: 0;">
+            <div class="container" style="max-width: 900px;">
+
+                <!-- 4. Profile Photo -->
+                <div class="guide-card fade-in-up">
+                    <h2>1. <span class="text-primary">Profile Photo</span> <span
+                            style="font-size: 1rem; color: var(--color-text-muted); font-weight: 500;">(1000 x 1000
+                            pixels)</span></h2>
+
+                    <div class="guide-faq">
+                        <strong>Does your expression match how you want to be perceived?</strong>
+                        <p>Your expression should convey warmth, professionalism, or authority depending on the
+                            impression you want to make. A friendly smile makes you approachable, while a serious
+                            expression communicates expertise and confidence.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Does your background complement your face?</strong>
+                        <p>Keep it simple and neutral. Ensure your face stands out and is the focal point.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Is your photo consistent across platforms?</strong>
+                        <p>Use the same or a similar image across social media, email signature, and marketing materials
+                            to maintain brand recognition.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Is the photo high-resolution and clear?</strong>
+                        <p>It should be sharp, crisp, and at least 1000 x 1000 pixels to appear professional on all
+                            devices.</p>
+                    </div>
+                </div>
+
+                <!-- 5. Banner Photo -->
+                <div class="guide-card fade-in-up">
+                    <h2>2. <span class="text-primary">Banner Photo</span> <span
+                            style="font-size: 1rem; color: var(--color-text-muted); font-weight: 500;">(1584 x 396
+                            pixels)</span></h2>
+
+                    <div class="guide-faq">
+                        <strong>Does it state who you help and how?</strong>
+                        <p>Your banner should clearly communicate your target audience and your value proposition in a
+                            concise sentence.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Does it highlight the outcomes of your service?</strong>
+                        <p>Show the transformation clients can expect, such as time saved, increased revenue, or
+                            business growth. Focus on results rather than features.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Does it include authority-building elements?</strong>
+                        <p>Incorporate client logos, industry awards, media mentions, or measurable results that
+                            demonstrate expertise.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Is the design professional?</strong>
+                        <p>Ensure it is clean, visually consistent with your brand, and legible on all devices.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Is the photo high-resolution and clear?</strong>
+                        <p>It should be sharp, crisp, and at least 1584 x 396 pixels to appear professional on LinkedIn.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 6. Headline -->
+                <div class="guide-card fade-in-up">
+                    <h2>3. <span class="text-primary">Headline</span></h2>
+
+                    <div class="guide-faq">
+                        <strong>Does it highlight the transformation you provide?</strong>
+                        <p>Clearly describe the results or outcomes your clients experience. Avoid listing your job
+                            title alone.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Does it call out your target audience?</strong>
+                        <p>Be specific about the roles, industries, or types of companies you help. This immediately
+                            signals relevance.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Does it include authority builders?</strong>
+                        <p>Include measurable proof or achievements that demonstrate credibility. For example, "Helped
+                            50+ UK service businesses increase inbound enquiries through LinkedIn."</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Are the first words highly impactful?</strong>
+                        <p>The opening 7–10 words are most visible. Use action-oriented language to communicate value
+                            immediately.</p>
+                    </div>
+                </div>
+
+                <!-- 7. Featured Section -->
+                <div class="guide-card fade-in-up">
+                    <h2>4. <span class="text-primary">Featured Section</span> <span
+                            style="font-size: 1rem; color: var(--color-text-muted); font-weight: 500;">(1200 x 627
+                            pixels for images)</span></h2>
+
+                    <div class="guide-faq">
+                        <strong>Have you pinned high-value assets?</strong>
+                        <p>Include resources that support your business goals, such as free guides, service pages, or
+                            helpful content for potential clients.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Do the thumbnails create urgency?</strong>
+                        <p>Use visuals and text that convey importance or immediate value. Keep them clear and
+                            attention-grabbing.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Are the thumbnails mobile-friendly?</strong>
+                        <p>Maintain simple, uncluttered visuals. Stick to 1200 x 627 pixels for optimal display.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Do you include clear CTAs?</strong>
+                        <p>Each featured item should prompt a next step, like downloading a resource, visiting a page,
+                            or booking a call. Frame the CTA as a tangible benefit.</p>
+                    </div>
+                </div>
+
+                <!-- 8. About Section -->
+                <div class="guide-card fade-in-up">
+                    <h2>5. <span class="text-primary">About Section</span></h2>
+
+                    <div class="guide-faq">
+                        <strong>Does it start with a hook?</strong>
+                        <p>Open with a line that grabs attention by addressing a key pain point your audience faces.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Have you emphasised the problem?</strong>
+                        <p>Describe the impact of not addressing the issue, including financial, time, or growth
+                            consequences.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Do you outline the transformation you provide?</strong>
+                        <p>Be specific about the results clients can expect. Focus on outcomes rather than processes.
+                        </p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Have you included proof?</strong>
+                        <p>Use metrics, testimonials, or before-and-after results to build trust. Include real numbers
+                            and client outcomes when possible.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Is there a clear and simple CTA?</strong>
+                        <p>End with a single next step, such as contacting you for a consultation or exploring your
+                            services.</p>
+                    </div>
+                </div>
+
+                <!-- 9. Experience Section -->
+                <div class="guide-card fade-in-up">
+                    <h2>6. <span class="text-primary">Experience Section</span></h2>
+
+                    <div class="guide-faq">
+                        <strong>Have you shared outcome-led stories?</strong>
+                        <p>Highlight the challenges you solved and the results achieved. Each role should demonstrate
+                            your expertise and the value you provide.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Have you emphasised results?</strong>
+                        <p>Quantify your impact, for example, "Increased client enquiries by 40% in six months." Include
+                            links or visuals as proof.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Is your writing client-focused?</strong>
+                        <p>Write to educate and support potential clients rather than just describing yourself. Show how
+                            your role helps them achieve goals.</p>
+                    </div>
+                    <div class="guide-faq">
+                        <strong>Do you include CTAs?</strong>
+                        <p>End each experience entry with a low-friction next step, like booking a consultation or
+                            learning more about your services.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 10. SUMMARY CHECKLIST -->
+        <section class="section bg-light-tone">
+            <div class="container fade-in-up">
+                <div class="section-header text-center">
+                    <h2><span class="text-primary">Summary</span> Checklist</h2>
+                    <p class="section-lead">Quickly review these 6 areas before you finish.</p>
+                </div>
+
+                <div class="summary-grid">
+                    <div class="summary-box">
+                        <h3>1. Profile Photo</h3>
+                        <ul>
+                            <li class="checklist-item">Expression aligns with desired perception</li>
+                            <li class="checklist-item">Background enhances face</li>
+                            <li class="checklist-item">Consistent across platforms</li>
+                            <li class="checklist-item">High-resolution &amp; well-framed</li>
+                        </ul>
+                    </div>
+                    <div class="summary-box">
+                        <h3>2. Banner Photo</h3>
+                        <ul>
+                            <li class="checklist-item">Highlights clear outcomes</li>
+                            <li class="checklist-item">Includes authority builders</li>
+                            <li class="checklist-item">Brand-consistent design</li>
+                        </ul>
+                    </div>
+                    <div class="summary-box">
+                        <h3>3. Headline</h3>
+                        <ul>
+                            <li class="checklist-item">Calls out target audience</li>
+                            <li class="checklist-item">Emphasises desired outcomes</li>
+                            <li class="checklist-item">Includes proof &amp; achievements</li>
+                            <li class="checklist-item">Compelling first words</li>
+                        </ul>
+                    </div>
+                    <div class="summary-box">
+                        <h3>4. Featured Section</h3>
+                        <ul>
+                            <li class="checklist-item">Links to relevant resources</li>
+                            <li class="checklist-item">Thumbnails create urgency</li>
+                            <li class="checklist-item">Clear, benefit-driven CTAs</li>
+                        </ul>
+                    </div>
+                    <div class="summary-box">
+                        <h3>5. About Section</h3>
+                        <ul>
+                            <li class="checklist-item">Hooks the audience</li>
+                            <li class="checklist-item">Highlights key pain points</li>
+                            <li class="checklist-item">Promises transformation</li>
+                            <li class="checklist-item">Includes proof &amp; simple CTA</li>
+                        </ul>
+                    </div>
+                    <div class="summary-box">
+                        <h3>6. Experience Section</h3>
+                        <ul>
+                            <li class="checklist-item">Shares outcome-led stories</li>
+                            <li class="checklist-item">Shows tangible results</li>
+                            <li class="checklist-item">Client-focused writing</li>
+                            <li class="checklist-item">Clear next steps or CTA</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FINAL CTA SECTION -->
+        <section class="section cta-section text-center">
+            <div class="container fade-in-up">
+                <h2 style="font-size: 2.2rem; margin-bottom: 20px; line-height: 1.4;">Use this guide to optimise the
+                    <span class="text-primary">6
+                        key areas of your LinkedIn profile.</span>
+                </h2>
+                <p style="font-size: 1.1rem; opacity: 0.9; max-width: 800px; margin: 0 auto 30px;">Work through it step
+                    by step. If you need support or guidance, we can help you implement it to <span
+                        class="text-primary">maximise impact and
+                        results</span> as a gift!</p>
+                <a href="https://calendly.com/socialtigermarketing/30min" target="_blank"
+                    class="btn btn-primary btn-lg track-calendly" style="margin-bottom: 15px;">Schedule your chat</a>
+                <p style="font-size: 0.9rem; opacity: 0.8;">Schedule your FREE personalised profile chat down below</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">The Social&nbsp;<span class="text-primary">Tiger</span></a>
+                    <p>&copy;2026 The Social Tiger.&nbsp;<br>All rights reserved.&nbsp;<br>Based in the UK.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#" id="privacy-policy-link">Privacy Policy</a>
+                    <a href="#" id="terms-of-service-link">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AI Chatbot Widget -->
+    <div id="ai-chatbot-widget" class="chatbot-widget">
+        <!-- Chatbot Trigger Button -->
+        <button id="chatbot-toggle" class="chatbot-btn" aria-label="Open Chat">
+            <span class="icon">💬</span>
+        </button>
+
+        <!-- Chatbot Interface (Hidden by default) -->
+        <div id="chatbot-window" class="chatbot-window hidden">
+            <div class="chatbot-header">
+                <h4>Assistant</h4>
+                <button id="chatbot-close" class="close-btn">&times;</button>
+            </div>
+            <div class="chatbot-body">
+                <!-- Messages will be injected here -->
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbot-input" placeholder="Type your message...">
+                <button id="chatbot-send">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="script.js?v=2"></script>
+</body>
+
+</html>
