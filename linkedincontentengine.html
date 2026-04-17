@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn Content Engine | The Social Tiger</title>
+    <meta name="description" content="Create powerful LinkedIn posts and build a content strategy that actually works. Built for any business, any industry. Powered by The Social Tiger.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.min.js"></script>
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0a;
+            --card-bg: #1a1a1a;
+            --primary: #F5A623;
+            --primary-hover: #e09420;
+            --white: #ffffff;
+            --grey: #999999;
+            --border: #2a2a2a;
+            --input-bg: #111111;
+            --input-border: #333333;
+            --error-bg: #2a1010;
+            --error-border: #5a2020;
+            --radius: 8px;
+            --transition: 0.2s ease;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--white);
+            font-size: 16px;
+            line-height: 1.7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 32px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+        }
+
+        .navbar-logo img {
+            width: 160px;
+            height: auto;
+            display: block;
+        }
+
+        .navbar-logo-fallback {
+            display: none;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .navbar-links a {
+            color: var(--grey);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color var(--transition);
+        }
+
+        .navbar-links a:hover {
+            color: var(--primary);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 48px 24px 64px;
+        }
+
+        /* ===== PAGE VIEWS ===== */
+        .page {
+            display: none;
+            animation: fadeIn 0.35s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            text-align: center;
+            margin-bottom: 56px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero .subtitle {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        .hero .description {
+            font-size: 16px;
+            color: var(--grey);
+            max-width: 560px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* ===== CARDS GRID ===== */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 24px rgba(245, 166, 35, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(245, 166, 35, 0.1);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--primary);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--white);
+        }
+
+        .card p {
+            font-size: 15px;
+            color: var(--grey);
+            margin-bottom: 24px;
+            line-height: 1.7;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 14px 28px;
+            border-radius: var(--radius);
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition);
+            text-decoration: none;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #000000;
+            box-shadow: 0 0 16px rgba(245, 166, 35, 0.15);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 0 24px rgba(245, 166, 35, 0.25);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(245, 166, 35, 0.08);
+        }
+
+        .btn-dark {
+            background: transparent;
+            color: var(--grey);
+            border: 2px solid var(--border);
+        }
+
+        .btn-dark:hover {
+            border-color: var(--grey);
+            color: var(--white);
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+
+        .btn-row .btn {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        /* ===== BACK BUTTON ===== */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--grey);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 32px;
+            transition: color var(--transition);
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+        }
+
+        .back-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* ===== PAGE HEADERS ===== */
+        .page-header {
+            margin-bottom: 36px;
+        }
+
+        .page-header h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            font-size: 16px;
+            color: var(--grey);
+        }
+
+        /* ===== FORM STYLES ===== */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--grey);
+            margin-bottom: 8px;
+        }
+
+        .form-group .subtext {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            transition: border-color var(--transition);
+            outline: none;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #555;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--primary);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+            cursor: pointer;
+        }
+
+        /* Conditional story/case study fields */
+        .conditional-field {
+            display: none;
+            animation: fadeIn 0.35s ease;
+        }
+
+        .conditional-field.visible {
+            display: block;
+        }
+
+        .conditional-field textarea {
+            min-height: 150px;
+        }
+
+        .conditional-field label .required-badge {
+            display: inline-block;
+            background: rgba(245, 166, 35, 0.15);
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 8px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
+
+        .form-group select option {
+            background: #111;
+            color: #fff;
+        }
+
+        /* ===== LOADING STATE ===== */
+        .loading-state {
+            display: none;
+            text-align: center;
+            padding: 64px 24px;
+        }
+
+        .loading-state.active {
+            display: block;
+        }
+
+        .loading-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .loading-dots span {
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+
+        .loading-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes pulse {
+            0%, 80%, 100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+            40% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+        }
+
+        .loading-state p {
+            color: var(--grey);
+            font-size: 15px;
+        }
+
+        /* ===== OUTPUT CARD ===== */
+        .output-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            white-space: pre-wrap;
+            line-height: 1.8;
+            font-size: 16px;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+
+        /* ===== FEEDBACK SECTION ===== */
+        .feedback-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-top: 32px;
+        }
+
+        .feedback-section label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--grey);
+            margin-bottom: 12px;
+        }
+
+        .feedback-section textarea {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            min-height: 80px;
+            resize: vertical;
+            outline: none;
+            margin-bottom: 12px;
+            transition: border-color var(--transition);
+        }
+
+        .feedback-section textarea:focus {
+            border-color: var(--primary);
+        }
+
+        /* ===== STRATEGY SECTIONS ===== */
+        .strategy-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            margin-bottom: 20px;
+        }
+
+        .strategy-section h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .strategy-section .content {
+            color: var(--white);
+            line-height: 1.8;
+            font-size: 15px;
+            white-space: pre-wrap;
+        }
+
+        /* ===== CTA CARD ===== */
+        .cta-card {
+            background: var(--card-bg);
+            border: 2px solid var(--primary);
+            border-radius: var(--radius);
+            padding: 32px;
+            text-align: center;
+            margin-top: 32px;
+            box-shadow: 0 0 32px rgba(245, 166, 35, 0.06);
+        }
+
+        .cta-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .cta-card .btn-row {
+            justify-content: center;
+        }
+
+        /* ===== DOWNLOAD SECTION ===== */
+        .download-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            margin-top: 32px;
+        }
+
+        .download-section h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 6px;
+        }
+
+        .download-section .subtitle {
+            font-size: 15px;
+            color: var(--grey);
+            margin-bottom: 20px;
+        }
+
+        /* ===== ERROR STATE ===== */
+        .error-card {
+            background: var(--error-bg);
+            border: 1px solid var(--error-border);
+            border-radius: var(--radius);
+            padding: 24px;
+            text-align: center;
+            margin-top: 24px;
+            display: none;
+        }
+
+        .error-card.active {
+            display: block;
+        }
+
+        .error-card p {
+            color: #ff6b6b;
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 32px 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer p {
+            font-size: 13px;
+            color: var(--grey);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 700px) {
+            .navbar {
+                padding: 12px 16px;
+            }
+
+            .navbar-logo img {
+                margin: 0 auto;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .main-content {
+                padding: 32px 16px 48px;
+            }
+
+            .hero h1 {
+                font-size: 30px;
+            }
+
+            .hero .subtitle {
+                font-size: 17px;
+            }
+
+            .hero .description {
+                font-size: 15px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 24px;
+            }
+
+            .btn-row {
+                flex-direction: column;
+            }
+
+            .btn-row .btn {
+                width: 100%;
+            }
+
+            .page-header h2 {
+                font-size: 26px;
+            }
+
+            .strategy-section {
+                padding: 24px;
+            }
+
+            .output-card {
+                padding: 24px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="#" class="navbar-logo" onclick="showPage('home'); return false;">
+            <img src="https://www.thesocialtiger.com/assets/images/social-tiger-logo.png" alt="The Social Tiger" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="navbar-logo-fallback">THE SOCIAL TIGER</span>
+        </a>
+        <div class="navbar-links">
+            <a href="https://www.thesocialtiger.com" target="_blank" rel="noopener">Back to thesocialtiger.com</a>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- ======== HOME PAGE ======== -->
+        <div id="page-home" class="page active">
+            <section class="hero">
+                <h1>LinkedIn Content Engine</h1>
+                <p class="subtitle">Powered by The Social Tiger</p>
+                <p class="description">Create powerful LinkedIn posts and build a content strategy that actually works. Built for any business, any industry.</p>
+            </section>
+
+            <div class="cards-grid">
+                <!-- Card 1: Create a Post -->
+                <div class="card" id="card-create-post">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    </div>
+                    <h3>Create a Post</h3>
+                    <p>Generate a high quality LinkedIn post for any business in under 60 seconds.</p>
+                    <button class="btn btn-primary" onclick="showPage('create-post')">Create a Post</button>
+                </div>
+
+                <!-- Card 2: Brainstorm Content -->
+                <div class="card" id="card-brainstorm">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 1 4 12.9V17H8v-2.1A7 7 0 0 1 12 2z"/></svg>
+                    </div>
+                    <h3>Brainstorm Content</h3>
+                    <p>Get content pillars, post ideas, and a full 90 day strategy tailored to your business.</p>
+                    <button class="btn btn-outline" onclick="showPage('brainstorm')">Brainstorm Content</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======== CREATE A POST — FORM ======== -->
+        <div id="page-create-post" class="page">
+            <button class="back-btn" onclick="showPage('home')">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                Back
+            </button>
+
+            <div class="page-header">
+                <h2>Create a Post</h2>
+                <p>Fill in the details below and we will generate your post.</p>
+                <p style="margin-top: 8px; color: var(--primary); font-size: 14px; font-weight: 500;">The quality of Post output depends on the amount of information you give it. Please be as detailed as possible!</p>
+            </div>
+
+            <form id="post-form" onsubmit="handlePostSubmit(event)">
+                <div class="form-group">
+                    <label for="post-business">What type of business is this for?</label>
+                    <input type="text" id="post-business" placeholder="e.g. accountant, gym owner, estate agent, recruitment agency" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-audience">Who are you trying to reach?</label>
+                    <input type="text" id="post-audience" placeholder="e.g. small business owners, first time buyers, people aged 30 to 50 in Vancouver" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-topic">What is this post about?</label>
+                    <input type="text" id="post-topic" placeholder="e.g. why most people overpay on their taxes without knowing it" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-tone">How should this post sound?</label>
+                    <input type="text" id="post-tone" placeholder="e.g. warm and approachable, direct and confident, friendly and expert" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-type">What type of post is this?</label>
+                    <select id="post-type" required>
+                        <option value="Story">Story</option>
+                        <option value="Infographic">Infographic</option>
+                        <option value="Case Study">Case Study</option>
+                        <option value="Value Driven">Value Driven</option>
+                    </select>
+                </div>
+
+                <!-- Conditional: Story Details -->
+                <div class="form-group conditional-field visible" id="story-details-group">
+                    <label for="post-story-details">Tell details of the story <span class="required-badge">Required</span></label>
+                    <p class="subtext">Share the real events, facts, and details of your story. Be as specific as possible. The more detail you give, the stronger the post.</p>
+                    <textarea id="post-story-details" placeholder="e.g. Last year I lost my biggest client overnight. They called on a Tuesday morning and said they were moving to a competitor. I had 3 staff to pay and no backup plan. Here's what happened next..." required></textarea>
+                </div>
+
+                <!-- Conditional: Case Study Details -->
+                <div class="form-group conditional-field" id="case-study-details-group">
+                    <label for="post-case-study-details">Tell details of the Case Study <span class="required-badge">Required</span></label>
+                    <p class="subtext">Share the real details of the case study — the client, the problem, what you did, and the results. Do not exaggerate. The system will make it engaging.</p>
+                    <textarea id="post-case-study-details" placeholder="e.g. A local bakery was spending $2000/month on ads with no tracking. We rebuilt their campaign, focused on a 5km radius, and within 60 days they had a 4x return on ad spend..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-examples">Paste up to 3 example posts to match this business voice (optional)</label>
+                    <p class="subtext">Leave blank to use the tone entered above</p>
+                    <textarea id="post-examples" placeholder="Paste example LinkedIn posts here..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full" id="post-submit-btn">Generate Post</button>
+            </form>
+
+            <div class="loading-state" id="post-loading">
+                <div class="loading-dots">
+                    <span></span><span></span><span></span>
+                </div>
+                <p>Our expert panel is reviewing your brief and crafting your post...</p>
+            </div>
+
+            <div class="error-card" id="post-error">
+                <p>Something went wrong. Please try again.</p>
+                <button class="btn btn-primary" onclick="handlePostSubmit(null, true)">Retry</button>
+            </div>
+        </div>
+
+        <!-- ======== CREATE A POST — OUTPUT ======== -->
+        <div id="page-post-output" class="page">
+            <button class="back-btn" onclick="showPage('create-post')">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                Back
+            </button>
+
+            <div class="page-header">
+                <h2>Your Post is Ready</h2>
+            </div>
+
+            <div class="output-card" id="post-output-content"></div>
+
+            <div class="btn-row">
+                <button class="btn btn-primary" id="copy-post-btn" onclick="copyPost()">Copy Post</button>
+                <button class="btn btn-outline" onclick="handlePostSubmit(null, true)">Regenerate</button>
+                <button class="btn btn-dark" onclick="showPage('create-post')">New Post</button>
+            </div>
+
+            <div class="feedback-section">
+                <label>Not quite right? Tell us what to change.</label>
+                <textarea id="post-feedback" placeholder="e.g. make it shorter, change the hook, make it more direct..."></textarea>
+                <button class="btn btn-primary" onclick="handleRewrite()">Rewrite with Changes</button>
+            </div>
+
+            <div class="loading-state" id="post-rewrite-loading">
+                <div class="loading-dots">
+                    <span></span><span></span><span></span>
+                </div>
+                <p>Rewriting your post with your feedback...</p>
+            </div>
+
+            <div class="error-card" id="post-rewrite-error">
+                <p>Something went wrong. Please try again.</p>
+                <button class="btn btn-primary" onclick="handleRewrite()">Retry</button>
+            </div>
+        </div>
+
+        <!-- ======== BRAINSTORM — FORM ======== -->
+        <div id="page-brainstorm" class="page">
+            <button class="back-btn" onclick="showPage('home')">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                Back
+            </button>
+
+            <div class="page-header">
+                <h2>Brainstorm Content</h2>
+                <p>Tell us about the business and we will build your content strategy.</p>
+                <p style="margin-top: 8px; color: var(--primary); font-size: 14px; font-weight: 500;">The quality of Content Strategy output depends on the amount of information you give it. Please be as detailed as possible!</p>
+            </div>
+
+            <form id="brainstorm-form" onsubmit="handleBrainstormSubmit(event)">
+                <div class="form-group">
+                    <label for="brainstorm-business">What type of business is this for?</label>
+                    <input type="text" id="brainstorm-business" placeholder="e.g. accountant, gym owner, estate agent" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="brainstorm-audience">Who are you trying to reach?</label>
+                    <input type="text" id="brainstorm-audience" placeholder="e.g. small business owners, first time buyers, people aged 30 to 50 in Vancouver" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="brainstorm-website">Company Website (if any)</label>
+                    <input type="url" id="brainstorm-website" placeholder="e.g. https://www.yourbusiness.com">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full" id="brainstorm-submit-btn">Generate Strategy</button>
+            </form>
+
+            <div class="loading-state" id="brainstorm-loading">
+                <div class="loading-dots">
+                    <span></span><span></span><span></span>
+                </div>
+                <p>Building your personalised content strategy...</p>
+            </div>
+
+            <div class="error-card" id="brainstorm-error">
+                <p>Something went wrong. Please try again.</p>
+                <button class="btn btn-primary" onclick="handleBrainstormSubmit(null, true)">Retry</button>
+            </div>
+        </div>
+
+        <!-- ======== BRAINSTORM — OUTPUT ======== -->
+        <div id="page-brainstorm-output" class="page">
+            <button class="back-btn" onclick="showPage('brainstorm')">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                Back
+            </button>
+
+            <div class="page-header">
+                <h2>Your Content Strategy</h2>
+            </div>
+
+            <div id="brainstorm-output-sections"></div>
+
+            <div class="cta-card">
+                <h3>Would you like a detailed 90 day content plan for your business?</h3>
+                <div class="btn-row">
+                    <button class="btn btn-primary" onclick="handleNinetyDayPlan()">Yes, Build My 90 Day Plan</button>
+                    <button class="btn btn-dark" onclick="showPage('home')">No Thanks</button>
+                </div>
+            </div>
+
+            <div class="loading-state" id="ninety-day-loading">
+                <div class="loading-dots">
+                    <span></span><span></span><span></span>
+                </div>
+                <p>Building your 90 day content plan...</p>
+            </div>
+
+            <div class="error-card" id="ninety-day-error">
+                <p>Something went wrong. Please try again.</p>
+                <button class="btn btn-primary" onclick="handleNinetyDayPlan()">Retry</button>
+            </div>
+        </div>
+
+        <!-- ======== 90 DAY PLAN — OUTPUT ======== -->
+        <div id="page-ninety-day" class="page">
+            <button class="back-btn" onclick="showPage('brainstorm-output')">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                Back
+            </button>
+
+            <div class="page-header">
+                <h2>Your 90 Day Content Plan</h2>
+            </div>
+
+            <div id="ninety-day-output-sections"></div>
+
+            <div class="download-section">
+                <h3>Save Your Strategy</h3>
+                <p class="subtitle">Download your complete 90 day content plan.</p>
+                <div class="btn-row">
+                    <button class="btn btn-primary" onclick="downloadTxt()">Download as Text File</button>
+                    <button class="btn btn-outline" onclick="downloadDocx()">Download as Word Doc</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>&copy; 2025 The Social Tiger. All rights reserved.</p>
+    </footer>
+
+<script>
+const WORKER_URL = "https://groq-proxy.jordmol.workers.dev";
+
+// ===== STATE =====
+let currentPostInputs = {};
+let lastGeneratedPost = "";
+let brainstormInputs = {};
+let brainstormContent = "";
+let ninetyDayContent = "";
+
+// ===== PAGE NAVIGATION =====
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('page-' + pageId);
+    if (target) {
+        target.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    // Reset loading / error states when navigating
+    document.querySelectorAll('.loading-state').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.error-card').forEach(e => e.classList.remove('active'));
+}
+
+// ===== API CALL =====
+async function callWorker(systemPrompt) {
+    const response = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: "Generate the content now." }
+            ]
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("API request failed with status " + response.status);
+    }
+
+    const data = await response.json();
+
+    // Handle different response shapes
+    if (data.choices && data.choices[0] && data.choices[0].message) {
+        return data.choices[0].message.content;
+    }
+    if (data.result) {
+        return data.result;
+    }
+    if (data.response) {
+        return data.response;
+    }
+    if (typeof data === 'string') {
+        return data;
+    }
+
+    throw new Error("Unexpected response format");
+}
+
+// ===== FLOW 1: CREATE A POST =====
+
+// Conditional field visibility based on post type
+function handlePostTypeChange() {
+    const postType = document.getElementById('post-type').value;
+    const storyGroup = document.getElementById('story-details-group');
+    const caseStudyGroup = document.getElementById('case-study-details-group');
+    const storyTextarea = document.getElementById('post-story-details');
+    const caseStudyTextarea = document.getElementById('post-case-study-details');
+
+    // Reset both
+    storyGroup.classList.remove('visible');
+    caseStudyGroup.classList.remove('visible');
+    storyTextarea.required = false;
+    caseStudyTextarea.required = false;
+
+    if (postType === 'Story') {
+        storyGroup.classList.add('visible');
+        storyTextarea.required = true;
+    } else if (postType === 'Case Study') {
+        caseStudyGroup.classList.add('visible');
+        caseStudyTextarea.required = true;
+    }
+}
+
+// Attach listener on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const postTypeSelect = document.getElementById('post-type');
+    if (postTypeSelect) {
+        postTypeSelect.addEventListener('change', handlePostTypeChange);
+        // Initialize on load (Story is default)
+        handlePostTypeChange();
+    }
+});
+
+function getPostSystemPrompt(inputs) {
+    // Build story/case study specific instructions
+    let storyInstructions = '';
+    if (inputs.postType === 'Story' && inputs.storyDetails) {
+        storyInstructions = `
+
+STORY DETAILS PROVIDED BY THE USER:
+"${inputs.storyDetails}"
+
+STORY POST RULES:
+- The story MUST stay faithful to the user's factual details above.
+- Do NOT deviate from the events, sequence, business context, outcomes, or core facts provided.
+- Do NOT invent new facts, scenes, dialogue, timelines, or results that the user did not provide.
+- Focus closely on the details the user entered.
+- You MAY strengthen, heighten, or infer the emotional layer of the story to make it more relatable and engaging, as long as the underlying facts and story details remain unchanged.
+- It is acceptable to expand on likely emotional states such as frustration, uncertainty, overwhelm, relief, excitement, doubt, hope, or confidence when those emotions naturally fit the details provided.
+- Any emotional enhancement must remain believable, relevant, and consistent with the user's story.
+- Make the story relatable and very relevant to the business's ideal audience or leads.
+- The story should be emotionally engaging while remaining faithful to the user's actual details.
+
+STORYTELLING FRAMEWORK — apply in the background:
+- Stories win people emotionally and then the mind follows.
+- Facts alone are usually not enough.
+- A compelling story makes people care, remember, and trust.
+- Do NOT force this story into a hero's journey format.
+- Make the story stronger by using these 4 ingredients whenever the user's real details support them:
+  1. Time — makes the story feel grounded
+  2. Place — makes the story feel real
+  3. Character — makes the story feel human
+  4. Emotion — makes the story matter
+- Do NOT make up facts just to fit this framework.
+- Only the emotional layer may be enhanced. The factual layer must remain tied to the user's input.`;
+    }
+
+    let caseStudyInstructions = '';
+    if (inputs.postType === 'Case Study' && inputs.caseStudyDetails) {
+        caseStudyInstructions = `
+
+CASE STUDY DETAILS PROVIDED BY THE USER:
+"${inputs.caseStudyDetails}"
+
+CASE STUDY POST RULES:
+- The case study MUST stay faithful to the user's details above.
+- Do NOT deviate from the case study details provided.
+- Do NOT invent results, numbers, timelines, pain points, outcomes, or business details.
+- Focus closely on the details the user entered.
+- Make the case study highly relevant to the business's ideal audience or leads.
+- Make it engaging without sacrificing truth or accuracy.
+- You MAY improve the emotional resonance and human relatability of the case study, but you MUST NOT fabricate business facts or performance claims.
+
+STORYTELLING FRAMEWORK — apply in the background:
+- Stories win people emotionally and then the mind follows.
+- Facts alone are usually not enough.
+- A compelling story makes people care, remember, and trust.
+- Do NOT force this into a hero's journey format.
+- Make the case study stronger by using these 4 ingredients whenever the user's real details support them:
+  1. Time — makes the story feel grounded
+  2. Place — makes the story feel real
+  3. Character — makes the story feel human
+  4. Emotion — makes the story matter
+- Do NOT make up facts just to fit this framework.
+- Only the emotional layer may be enhanced. The factual layer must remain tied to the user's input.`;
+    }
+
+    return `You are a Content Marketer with 15 years of experience working with businesses across every industry. You have written thousands of LinkedIn posts. You know exactly what stops a scroll and what gets ignored. You are direct, honest, and ruthless about quality. You do not let average work leave your desk.
+
+=== HOOK RULES (MANDATORY — NO EXCEPTIONS) ===
+- The hook MUST be exactly 6 to 8 words long. Count the words. This is non-negotiable.
+- The hook acts as a pattern interrupt to make the ideal audience want to read the rest of the post.
+- The hook MUST be relevant to the business, the topic, and the ideal audience.
+- The hook must NOT be vague, empty, misleading, or disconnected from the rest of the post.
+- Before finalizing, double-check the hook is strong in:
+  - Clarity
+  - Curiosity
+  - Relevance
+  - Emotional pull
+  - Scroll-stopping quality
+  - Audience fit
+- If the hook does not meet all of these, rewrite it before outputting.
+
+=== EXPERT QUALITY FILTER (APPLY SILENTLY IN BACKGROUND) ===
+Before finalizing any post, silently evaluate and improve the hook and body using the principles of these experts. Do NOT mention them in the output.
+
+RUBEN HASSID:
+- Is the hook truly about the reader?
+- Does it break the scroll pattern?
+- Does it create an open loop?
+
+DAVID OGILVY:
+- Is there one single clear idea?
+- Is every word earning its place?
+- Would a complete stranger understand this on first read?
+
+SETH GODIN:
+- Is there a specific human moment?
+- Is it specific enough to feel real?
+- Does it change how the reader sees something?
+
+CHRIS HADDAD (PIG Framework):
+- Is the Pain named clearly?
+- Is it Intensified?
+- Is the Gap visible?
+
+ROBERT CIALDINI:
+- Does it build Liking in the opening?
+- Is there Social Proof?
+- Does it create Hope?
+- Does it end with low friction Commitment?
+
+JASMIN ALIC:
+- Is the hook formatted for maximum LinkedIn scroll-stopping?
+- Is the structure optimised for mobile reading?
+- Does each line pull the reader to the next?
+
+LARA ACOSTA:
+- Does the post position the author as a trusted authority?
+- Is personal branding woven naturally into the content?
+- Does it create genuine connection with the audience?
+
+JEREMY MINER:
+- Does the post use questions that trigger self-reflection?
+- Does it challenge the reader's current assumptions?
+- Does it create urgency without being pushy?
+
+MYRON GOLDEN:
+- Does the post speak to a specific problem the audience is willing to pay to solve?
+- Is the value clear and tangible?
+- Does it position the solution as premium and worth pursuing?
+
+DAN MARTELL:
+- Is the post efficient and action-oriented?
+- Does it offer a clear takeaway the reader can use today?
+- Does it demonstrate expertise through giving, not telling?
+
+STEPHEN SEMPLE:
+- Does this post speak to the real buying triggers of the target audience?
+- Is the messaging grounded in what actually makes people act?
+- Does it avoid marketing clichés and speak like a real person?
+
+Use these experts to improve:
+- Hook quality
+- Clarity
+- Positioning
+- Persuasion
+- Emotional resonance
+- Memorability
+- Lead-generation effectiveness
+- LinkedIn relevance
+- Inbound lead quality
+
+=== AUDIENCE RELEVANCE RULE ===
+- Every post MUST be highly relevant to the ideal lead or audience of the business entered by the user.
+- Pain points, desires, frustrations, goals, and examples used in the post MUST match the ideal audience as closely as possible.
+- Do NOT generate generic content.
+- Do NOT write broad content that could apply to anyone.
+- Before finalizing the post, confirm that it would attract the right type of inbound lead for that business.
+
+Business type: ${inputs.business}
+Target audience: ${inputs.audience}
+Post topic: ${inputs.topic}
+Tone of voice: ${inputs.tone}
+Post type: ${inputs.postType}
+Example posts for voice matching: ${inputs.examples || "None provided — use the tone described above."}
+${storyInstructions}${caseStudyInstructions}
+
+If example posts are provided analyse them for:
+Sentence length and rhythm
+Formal or informal language
+Repeated words or phrases
+How they open and close
+Their energy and personality
+Then match that voice in the new post.
+
+POST TYPE FORMATS:
+
+IF STORY:
+Hook (MUST be 6 to 8 words — count them)
+
+Opening paragraph (2 to 3 sentences)
+Cialdini Liking — make reader feel understood.
+
+Problem paragraph (2 to 3 sentences)
+Haddad PIG — Pain, Intensify, Gap.
+
+Story paragraph (2 to 3 sentences)
+Godin specific moment plus Cialdini Social Proof.
+
+Insight paragraph (2 to 3 sentences)
+Ogilvy one clear idea in plain language.
+
+Outcome paragraph (2 to 3 sentences)
+Cialdini Hope — warm and inspirational.
+
+Call to action (1 to 2 sentences)
+Cialdini Commitment — low friction.
+
+Engagement question (1 sentence)
+Easy to answer, yes no or one word.
+
+IF INFOGRAPHIC:
+Hook (MUST be 6 to 8 words — count them)
+
+Opening statement (2 sentences)
+
+Key point 1 (2 sentences — standalone insight)
+
+Key point 2 (2 sentences — standalone insight)
+
+Key point 3 (2 sentences — standalone insight)
+
+Key point 4 (2 sentences — standalone insight)
+
+Key point 5 (2 sentences — standalone insight)
+
+Call to action (1 to 2 sentences)
+
+Engagement question (1 sentence)
+
+IF CASE STUDY:
+Hook (MUST be 6 to 8 words — count them)
+
+The situation (2 sentences — who and what problem)
+
+The struggle (2 sentences — what they tried)
+
+The shift (2 sentences — what changed)
+
+The result (2 sentences — specific outcomes)
+
+The lesson (2 sentences — what this means for the reader)
+
+Call to action (1 to 2 sentences)
+
+Engagement question (1 sentence)
+
+IF VALUE DRIVEN:
+Hook (MUST be 6 to 8 words — count them)
+
+Opening paragraph (2 to 3 sentences — name the problem clearly)
+
+The insight (2 to 3 sentences — the teaching or shift in thinking)
+
+Practical application (2 to 3 sentences — what the reader can do today)
+
+Positive outcome (2 sentences — what life looks like after)
+
+Call to action (1 to 2 sentences)
+
+Engagement question (1 sentence)
+
+UNIVERSAL RULES FOR ALL POST TYPES:
+2 to 3 full sentences per paragraph only
+Blank line between every paragraph
+Simple language eighth grade reading level
+Maximum 15 words per sentence
+No em dashes anywhere
+No hashtags anywhere
+No bullet points inside the post
+No corporate jargon
+No sentences starting with And But or Because
+Professional casual tone throughout
+Warm positive and inspirational throughout
+Full sentences only no fragments
+Written for the reader never the writer
+Post character output is 800 to 1500 characters
+End with an engagement question that is very easy to answer directed at the businesses ideal audience even if there is a CTA in the post at the end too.
+
+=== FINAL QUALITY CHECK BEFORE OUTPUT ===
+Before returning the post, confirm ALL of the following:
+- The hook is exactly 6 to 8 words long (count them)
+- The hook is strong enough to stop scrolling
+- The post is highly relevant to the ideal audience
+- The post is NOT generic
+- The post supports inbound leads
+- No factual details were invented
+- Only emotional depth was enhanced where appropriate
+- If Story Post: the story stayed faithful to the user's input
+- If Case Study Post: the case study stayed faithful to the user's input
+- The post was improved using the expert quality filter in the background
+- If ANY of these conditions are not met, REVISE before outputting
+
+Output only the finished post.
+No preamble. No explanation. No commentary before or after.
+Just the post itself.`;
+}
+
+async function handlePostSubmit(event, isRetry = false) {
+    if (event) event.preventDefault();
+
+    if (!isRetry) {
+        const postType = document.getElementById('post-type').value;
+        currentPostInputs = {
+            business: document.getElementById('post-business').value.trim(),
+            audience: document.getElementById('post-audience').value.trim(),
+            topic: document.getElementById('post-topic').value.trim(),
+            tone: document.getElementById('post-tone').value.trim(),
+            postType: postType,
+            examples: document.getElementById('post-examples').value.trim(),
+            storyDetails: postType === 'Story' ? document.getElementById('post-story-details').value.trim() : '',
+            caseStudyDetails: postType === 'Case Study' ? document.getElementById('post-case-study-details').value.trim() : ''
+        };
+    }
+
+    const form = document.getElementById('post-form');
+    const loading = document.getElementById('post-loading');
+    const error = document.getElementById('post-error');
+    const submitBtn = document.getElementById('post-submit-btn');
+
+    form.style.display = 'none';
+    loading.classList.add('active');
+    error.classList.remove('active');
+    submitBtn.disabled = true;
+
+    try {
+        const prompt = getPostSystemPrompt(currentPostInputs);
+        const result = await callWorker(prompt);
+        lastGeneratedPost = result.trim();
+        document.getElementById('post-output-content').textContent = lastGeneratedPost;
+        showPage('post-output');
+    } catch (err) {
+        loading.classList.remove('active');
+        error.classList.add('active');
+        form.style.display = 'block';
+        console.error("Post generation error:", err);
+    } finally {
+        submitBtn.disabled = false;
+    }
+}
+
+function copyPost() {
+    const btn = document.getElementById('copy-post-btn');
+    navigator.clipboard.writeText(lastGeneratedPost).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy Post'; }, 2000);
+    }).catch(() => {
+        btn.textContent = 'Failed';
+        setTimeout(() => { btn.textContent = 'Copy Post'; }, 2000);
+    });
+}
+
+async function handleRewrite() {
+    const feedback = document.getElementById('post-feedback').value.trim();
+    if (!feedback) return;
+
+    const feedbackSection = document.querySelector('.feedback-section');
+    const loading = document.getElementById('post-rewrite-loading');
+    const error = document.getElementById('post-rewrite-error');
+
+    feedbackSection.style.display = 'none';
+    loading.classList.add('active');
+    error.classList.remove('active');
+
+    const rewritePrompt = getPostSystemPrompt(currentPostInputs) + `
+
+ADDITIONAL INSTRUCTION: The previous version of this post has been reviewed. Here is the feedback to apply:
+
+"${feedback}"
+
+Previous post:
+${lastGeneratedPost}
+
+Rewrite the post applying this feedback while following all the same rules above.
+Output only the rewritten post. No preamble. No commentary.`;
+
+    try {
+        const result = await callWorker(rewritePrompt);
+        lastGeneratedPost = result.trim();
+        document.getElementById('post-output-content').textContent = lastGeneratedPost;
+        loading.classList.remove('active');
+        feedbackSection.style.display = 'block';
+        document.getElementById('post-feedback').value = '';
+    } catch (err) {
+        loading.classList.remove('active');
+        error.classList.add('active');
+        feedbackSection.style.display = 'block';
+        console.error("Rewrite error:", err);
+    }
+}
+
+// ===== FLOW 2: BRAINSTORM CONTENT =====
+function getBrainstormPrompt(inputs) {
+    return `You are a Content Marketer with 15 years of experience. You are building a complete content strategy for this specific business.
+
+Everything you write must be specific to this exact business type and audience.
+Never give generic advice.
+Write in plain language as if talking to a business owner who is not a marketer.
+
+Business type: ${inputs.business}
+Target audience: ${inputs.audience}
+Company website: ${inputs.website || 'Not provided'}
+
+Write the full strategy in this exact order:
+
+SECTION 1 — CONTENT PILLARS
+
+Suggest 4 to 5 content pillars.
+For each pillar write:
+- Pillar name and funnel stage in brackets
+  Example: Client Education (Top of Funnel)
+- 2 sentences explaining why this pillar works for this specific business
+- 2 specific example post topics
+
+Always include:
+At least 2 Top of Funnel pillars
+At least 1 Middle of Funnel pillar
+At least 1 Bottom of Funnel pillar
+
+---
+
+SECTION 2 — YOUR CONTENT FUNNEL EXPLAINED
+
+Write this in simple plain language for a business owner who has never heard of a content funnel.
+
+TOP OF FUNNEL — AWARENESS
+3 to 4 sentences on what this is and what job it does for this specific business.
+Then 2 specific example post topics.
+
+MIDDLE OF FUNNEL — CONSIDERATION
+3 to 4 sentences on what this is and how it moves someone from aware to interested.
+Then 2 specific example post topics.
+
+BOTTOM OF FUNNEL — CONVERSION
+3 to 4 sentences on what this is and how it turns a warm reader into an enquiry.
+Then 2 specific example post topics.
+
+CONTENT MIX RECOMMENDATION
+Write this exact format:
+For a ${inputs.business} targeting ${inputs.audience} we recommend posting roughly [X]% top of funnel, [X]% middle of funnel, and [X]% bottom of funnel.
+Then 3 sentences explaining why.
+
+---
+
+SECTION 3 — CONTENT STRATEGY TIPS
+
+Give 4 to 5 practical tips specific to this business type and audience.
+For each tip write a clear title then 3 to 4 sentences explaining it.
+Not generic. Specific to this situation.
+
+---
+
+SECTION 4 — POST IDEAS
+
+Give 10 specific post ideas.
+For each write:
+Post topic
+Post type (Story, Infographic, Case Study, or Value Driven)
+Funnel stage (Top, Middle, or Bottom)
+1 to 2 sentences on why it resonates.
+
+Always include:
+4 Top of Funnel ideas
+3 Middle of Funnel ideas
+3 Bottom of Funnel ideas
+
+---
+
+Use these exact section headers:
+CONTENT PILLARS
+YOUR CONTENT FUNNEL EXPLAINED
+CONTENT STRATEGY TIPS
+POST IDEAS
+
+Output only the strategy content.
+No preamble. No commentary.`;
+}
+
+async function handleBrainstormSubmit(event, isRetry = false) {
+    if (event) event.preventDefault();
+
+    if (!isRetry) {
+        brainstormInputs = {
+            business: document.getElementById('brainstorm-business').value.trim(),
+            audience: document.getElementById('brainstorm-audience').value.trim(),
+            website: document.getElementById('brainstorm-website').value.trim()
+        };
+    }
+
+    const form = document.getElementById('brainstorm-form');
+    const loading = document.getElementById('brainstorm-loading');
+    const error = document.getElementById('brainstorm-error');
+    const submitBtn = document.getElementById('brainstorm-submit-btn');
+
+    form.style.display = 'none';
+    loading.classList.add('active');
+    error.classList.remove('active');
+    submitBtn.disabled = true;
+
+    try {
+        const prompt = getBrainstormPrompt(brainstormInputs);
+        const result = await callWorker(prompt);
+        brainstormContent = result.trim();
+        renderBrainstormOutput(brainstormContent);
+        showPage('brainstorm-output');
+    } catch (err) {
+        loading.classList.remove('active');
+        error.classList.add('active');
+        form.style.display = 'block';
+        console.error("Brainstorm error:", err);
+    } finally {
+        submitBtn.disabled = false;
+    }
+}
+
+function renderBrainstormOutput(content) {
+    const container = document.getElementById('brainstorm-output-sections');
+    container.innerHTML = '';
+
+    const sectionHeaders = [
+        'CONTENT PILLARS',
+        'YOUR CONTENT FUNNEL EXPLAINED',
+        'CONTENT STRATEGY TIPS',
+        'POST IDEAS'
+    ];
+
+    const sections = splitBySections(content, sectionHeaders);
+
+    sections.forEach(section => {
+        const div = document.createElement('div');
+        div.className = 'strategy-section';
+        div.innerHTML = `<h3>${escapeHTML(section.title)}</h3><div class="content">${escapeHTML(section.body)}</div>`;
+        container.appendChild(div);
+    });
+}
+
+function splitBySections(text, headers) {
+    const sections = [];
+    let remaining = text;
+
+    for (let i = 0; i < headers.length; i++) {
+        const header = headers[i];
+        const nextHeader = headers[i + 1];
+        const startIdx = remaining.indexOf(header);
+
+        if (startIdx === -1) continue;
+
+        let endIdx;
+        if (nextHeader) {
+            endIdx = remaining.indexOf(nextHeader, startIdx + header.length);
+            if (endIdx === -1) endIdx = remaining.length;
+        } else {
+            endIdx = remaining.length;
+        }
+
+        const body = remaining.substring(startIdx + header.length, endIdx).trim();
+        sections.push({ title: header, body: body });
+    }
+
+    // If no sections found, put everything in a single section
+    if (sections.length === 0) {
+        sections.push({ title: 'YOUR CONTENT STRATEGY', body: text.trim() });
+    }
+
+    return sections;
+}
+
+function escapeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+// ===== 90 DAY PLAN =====
+function getNinetyDayPrompt(inputs) {
+    return `You are a Content Marketer with 15 years of experience.
+
+Build a complete 90 day LinkedIn content plan for this exact business.
+
+Business type: ${inputs.business}
+Target audience: ${inputs.audience}
+
+Write in plain language for a business owner not a marketer.
+Be specific to this business throughout.
+Never be generic.
+
+Write in this exact order:
+
+90 DAY CONTENT FUNNEL PLAN
+
+Introduction (2 to 3 sentences on what this plan will do for this business)
+
+DAYS 1 TO 30 — BUILD AWARENESS
+Goal of this phase for this business.
+Percentage of posts that should be top of funnel.
+Topics and themes to focus on.
+What the reader should feel after 30 days.
+One specific action to take in week one.
+
+DAYS 31 TO 60 — BUILD TRUST
+Goal of this phase.
+How the content mix shifts.
+What middle of funnel content to introduce.
+How to deepen relationships with existing readers.
+One specific action to take in week five.
+
+DAYS 61 TO 90 — GENERATE CONVERSATIONS
+Goal of this phase.
+How bottom of funnel content gets introduced without feeling salesy.
+What post types turn readers into enquiries.
+How to make the ask feel natural.
+One specific action to take in week nine.
+
+WHAT TO EXPECT BY DAY 90
+3 to 4 honest sentences on realistic outcomes.
+Use language like you will likely and most businesses at this stage.
+Not hype.
+
+POSTING FREQUENCY
+How many times per week to post.
+Best days and times for this audience.
+Why this frequency works.
+
+BEST CONTENT MIX
+How to balance personal stories versus educational content.
+Industry insight versus client results.
+Short posts versus longer posts.
+
+COMMON MISTAKES
+3 to 4 mistakes this business type makes on LinkedIn.
+For each: what it is, why it hurts, what to do instead.
+
+ONE QUICK WIN
+One thing they can do this week.
+Under an hour to implement.
+3 to 4 sentences on what it is and why it works.
+
+Use these exact headers in your response:
+90 DAY CONTENT FUNNEL PLAN
+DAYS 1 TO 30 — BUILD AWARENESS
+DAYS 31 TO 60 — BUILD TRUST
+DAYS 61 TO 90 — GENERATE CONVERSATIONS
+WHAT TO EXPECT BY DAY 90
+POSTING FREQUENCY
+BEST CONTENT MIX
+COMMON MISTAKES
+ONE QUICK WIN
+
+Output only the plan content.
+No preamble. No commentary.`;
+}
+
+async function handleNinetyDayPlan() {
+    const loading = document.getElementById('ninety-day-loading');
+    const error = document.getElementById('ninety-day-error');
+    const ctaCard = document.querySelector('#page-brainstorm-output .cta-card');
+
+    ctaCard.style.display = 'none';
+    loading.classList.add('active');
+    error.classList.remove('active');
+
+    try {
+        const prompt = getNinetyDayPrompt(brainstormInputs);
+        const result = await callWorker(prompt);
+        ninetyDayContent = result.trim();
+        renderNinetyDayOutput(ninetyDayContent);
+        showPage('ninety-day');
+    } catch (err) {
+        loading.classList.remove('active');
+        error.classList.add('active');
+        ctaCard.style.display = 'block';
+        console.error("90 day plan error:", err);
+    }
+}
+
+function renderNinetyDayOutput(content) {
+    const container = document.getElementById('ninety-day-output-sections');
+    container.innerHTML = '';
+
+    const sectionHeaders = [
+        '90 DAY CONTENT FUNNEL PLAN',
+        'DAYS 1 TO 30',
+        'DAYS 31 TO 60',
+        'DAYS 61 TO 90',
+        'WHAT TO EXPECT BY DAY 90',
+        'POSTING FREQUENCY',
+        'BEST CONTENT MIX',
+        'COMMON MISTAKES',
+        'ONE QUICK WIN'
+    ];
+
+    const sections = splitBySectionsFlexible(content, sectionHeaders);
+
+    sections.forEach(section => {
+        const div = document.createElement('div');
+        div.className = 'strategy-section';
+        div.innerHTML = `<h3>${escapeHTML(section.title)}</h3><div class="content">${escapeHTML(section.body)}</div>`;
+        container.appendChild(div);
+    });
+}
+
+function splitBySectionsFlexible(text, headers) {
+    const sections = [];
+    const lines = text.split('\n');
+    let currentTitle = null;
+    let currentBody = [];
+
+    for (const line of lines) {
+        const trimmed = line.trim();
+        const matchedHeader = headers.find(h => trimmed.toUpperCase().startsWith(h));
+
+        if (matchedHeader) {
+            if (currentTitle !== null) {
+                sections.push({ title: currentTitle, body: currentBody.join('\n').trim() });
+            }
+            currentTitle = trimmed;
+            currentBody = [];
+        } else {
+            currentBody.push(line);
+        }
+    }
+
+    if (currentTitle !== null) {
+        sections.push({ title: currentTitle, body: currentBody.join('\n').trim() });
+    }
+
+    if (sections.length === 0) {
+        sections.push({ title: '90 DAY CONTENT FUNNEL PLAN', body: text.trim() });
+    }
+
+    return sections;
+}
+
+// ===== DOWNLOADS =====
+function getAllStrategyText() {
+    let full = '';
+    full += '=== CONTENT STRATEGY ===\n\n';
+    full += brainstormContent + '\n\n';
+    full += '=== 90 DAY CONTENT PLAN ===\n\n';
+    full += ninetyDayContent + '\n';
+    return full;
+}
+
+function downloadTxt() {
+    const text = getAllStrategyText();
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'social-tiger-content-strategy.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+async function downloadDocx() {
+    try {
+        const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = docx;
+
+        const children = [];
+
+        // Title
+        children.push(new Paragraph({
+            children: [new TextRun({ text: 'The Social Tiger — Content Strategy', bold: true, size: 36, color: 'F5A623' })],
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 400 }
+        }));
+
+        children.push(new Paragraph({
+            children: [new TextRun({ text: `Business: ${brainstormInputs.business}`, size: 24, color: '999999' })],
+            spacing: { after: 100 }
+        }));
+
+        children.push(new Paragraph({
+            children: [new TextRun({ text: `Audience: ${brainstormInputs.audience}`, size: 24, color: '999999' })],
+            spacing: { after: 400 }
+        }));
+
+        // Content Strategy
+        const strategyLines = brainstormContent.split('\n');
+        for (const line of strategyLines) {
+            const trimmed = line.trim();
+            const isHeader = ['CONTENT PILLARS', 'YOUR CONTENT FUNNEL EXPLAINED', 'CONTENT STRATEGY TIPS', 'POST IDEAS'].some(h => trimmed.toUpperCase().startsWith(h));
+
+            if (isHeader) {
+                children.push(new Paragraph({
+                    children: [new TextRun({ text: trimmed, bold: true, size: 28, color: 'F5A623' })],
+                    heading: HeadingLevel.HEADING_2,
+                    spacing: { before: 400, after: 200 }
+                }));
+            } else if (trimmed.length > 0) {
+                children.push(new Paragraph({
+                    children: [new TextRun({ text: trimmed, size: 22 })],
+                    spacing: { after: 100 }
+                }));
+            } else {
+                children.push(new Paragraph({ children: [], spacing: { after: 100 } }));
+            }
+        }
+
+        // Separator
+        children.push(new Paragraph({
+            children: [new TextRun({ text: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', color: 'F5A623' })],
+            spacing: { before: 400, after: 400 }
+        }));
+
+        // 90 Day Plan
+        const ninetyHeaders = [
+            '90 DAY CONTENT FUNNEL PLAN', 'DAYS 1 TO 30', 'DAYS 31 TO 60',
+            'DAYS 61 TO 90', 'WHAT TO EXPECT BY DAY 90', 'POSTING FREQUENCY',
+            'BEST CONTENT MIX', 'COMMON MISTAKES', 'ONE QUICK WIN'
+        ];
+
+        const planLines = ninetyDayContent.split('\n');
+        for (const line of planLines) {
+            const trimmed = line.trim();
+            const isHeader = ninetyHeaders.some(h => trimmed.toUpperCase().startsWith(h));
+
+            if (isHeader) {
+                children.push(new Paragraph({
+                    children: [new TextRun({ text: trimmed, bold: true, size: 28, color: 'F5A623' })],
+                    heading: HeadingLevel.HEADING_2,
+                    spacing: { before: 400, after: 200 }
+                }));
+            } else if (trimmed.length > 0) {
+                children.push(new Paragraph({
+                    children: [new TextRun({ text: trimmed, size: 22 })],
+                    spacing: { after: 100 }
+                }));
+            } else {
+                children.push(new Paragraph({ children: [], spacing: { after: 100 } }));
+            }
+        }
+
+        const doc = new Document({
+            sections: [{ children: children }]
+        });
+
+        const blob = await Packer.toBlob(doc);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'social-tiger-content-strategy.docx';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    } catch (err) {
+        console.error("DOCX generation error:", err);
+        alert("Could not generate Word document. Please try the text download instead.");
+    }
+}
+
+// ===== FORM RESET ON PAGE SHOW =====
+const observer = new MutationObserver(() => {
+    // When create-post page is shown, ensure the form is visible
+    const createPostPage = document.getElementById('page-create-post');
+    if (createPostPage && createPostPage.classList.contains('active')) {
+        const form = document.getElementById('post-form');
+        const loading = document.getElementById('post-loading');
+        if (form) form.style.display = 'block';
+        if (loading) loading.classList.remove('active');
+    }
+
+    // Same for brainstorm
+    const brainstormPage = document.getElementById('page-brainstorm');
+    if (brainstormPage && brainstormPage.classList.contains('active')) {
+        const form = document.getElementById('brainstorm-form');
+        const loading = document.getElementById('brainstorm-loading');
+        if (form) form.style.display = 'block';
+        if (loading) loading.classList.remove('active');
+    }
+
+    // Reset brainstorm output CTA
+    const brainstormOutputPage = document.getElementById('page-brainstorm-output');
+    if (brainstormOutputPage && brainstormOutputPage.classList.contains('active')) {
+        const cta = brainstormOutputPage.querySelector('.cta-card');
+        if (cta) cta.style.display = 'block';
+    }
+});
+
+// Observe changes on all pages
+document.querySelectorAll('.page').forEach(page => {
+    observer.observe(page, { attributes: true, attributeFilter: ['class'] });
+});
+</script>
+
+</body>
+</html>
