@@ -802,7 +802,7 @@
             </div>
 
             <div class="error-card" id="post-error">
-                <p>Something went wrong. Please try again.</p>
+                <p id="post-error-msg">Something went wrong. Please try again.</p>
                 <button class="btn btn-primary" onclick="handlePostSubmit(null, true)">Retry</button>
             </div>
         </div>
@@ -1312,6 +1312,15 @@ async function handlePostSubmit(event, isRetry = false) {
         loading.classList.remove('active');
         error.classList.add('active');
         form.style.display = 'block';
+        // Show user-friendly error message
+        const errorMsg = document.getElementById('post-error-msg');
+        if (err.message && err.message.includes('rate_limit')) {
+            errorMsg.textContent = 'Daily token limit reached. Please wait a few minutes and try again.';
+        } else if (err.message && err.message.includes('Rate limit')) {
+            errorMsg.textContent = 'Daily token limit reached. Please wait a few minutes and try again.';
+        } else {
+            errorMsg.textContent = 'Something went wrong. Please try again.';
+        }
         console.error("Post generation error:", err);
     } finally {
         submitBtn.disabled = false;
