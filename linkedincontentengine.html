@@ -979,22 +979,51 @@ function showPage(pageId) {
 
 // ===== API CALL =====
 async function callWorker(systemPrompt) {
-    const response = await fetch(WORKER_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            messages: [
-                { role: "system", content: systemPrompt },
-                { role: "user", content: "Generate the content now." }
-            ]
-        })
-    });
-
-    if (!response.ok) {
-        throw new Error("API request failed with status " + response.status);
+    console.log("Prompt length (chars):", systemPrompt.length);
+    
+    let response;
+    try {
+        response = await fetch(WORKER_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                messages: [
+                    { role: "system", content: systemPrompt },
+                    { role: "user", content: "Generate the content now." }
+                ]
+            })
+        });
+    } catch (networkErr) {
+        console.error("Network error:", networkErr);
+        throw new Error("Network error: " + networkErr.message);
     }
 
-    const data = await response.json();
+    if (!response.ok) {
+        const errorBody = await response.text().catch(() => "Could not read error body");
+        console.error("API error - Status:", response.status, "Body:", errorBody);
+        throw new Error("API request failed with status " + response.status + ": " + errorBody);
+    }
+
+    const rawText = await response.text();
+    console.log("Raw response (first 200 chars):", rawText.substring(0, 200));
+    
+    let data;
+    try {
+        data = JSON.parse(rawText);
+    } catch (parseErr) {
+        console.error("JSON parse error:", parseErr, "Raw:", rawText.substring(0, 500));
+        throw new Error("Failed to parse response as JSON");
+    }
+
+    // Log the full response for debugging
+    console.log("Response keys:", Object.keys(data));
+    console.log("Full response:", JSON.stringify(data).substring(0, 1000));
+
+    // Handle error responses from Groq
+    if (data.error) {
+        console.error("Groq API error:", data.error);
+        throw new Error("Groq API error: " + (data.error.message || JSON.stringify(data.error)));
+    }
 
     // Handle different response shapes
     if (data.choices && data.choices[0] && data.choices[0].message) {
@@ -1010,6 +1039,7 @@ async function callWorker(systemPrompt) {
         return data;
     }
 
+    console.error("Unexpected response format:", JSON.stringify(data).substring(0, 1000));
     throw new Error("Unexpected response format");
 }
 
