@@ -748,6 +748,20 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="post-website">Website (if any)</label>
+                    <input type="url" id="post-website" placeholder="e.g. https://www.yourbusiness.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="post-length">Post Length</label>
+                    <select id="post-length" required>
+                        <option value="short">Short (400–600 characters)</option>
+                        <option value="medium" selected>Medium (900–1200 characters)</option>
+                        <option value="long">Long Form (1200–1600 characters)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label for="post-type">What type of post is this?</label>
                     <select id="post-type" required>
                         <option value="Story">Story</option>
@@ -1232,7 +1246,10 @@ Business type: ${inputs.business}
 Target audience: ${inputs.audience}
 Post topic: ${inputs.topic}
 Tone of voice: ${inputs.tone}
+Website: ${inputs.website || 'Not provided'}
+${inputs.website ? `WEBSITE CONTEXT INSTRUCTION: The user has provided their website (${inputs.website}). Use any information available from this website — such as services offered, brand positioning, target market, unique selling points, testimonials, and company background — to deeply inform and strengthen the post. The more context you pull from the website the better the post will be. Treat the website as a primary source of truth about this business.` : ''}
 Post type: ${inputs.postType}
+Post length: ${inputs.postLength === 'short' ? 'Short (400 to 600 characters)' : inputs.postLength === 'medium' ? 'Medium (900 to 1200 characters)' : 'Long Form (1200 to 1600 characters)'}
 Example posts for voice matching: ${inputs.examples || "None provided — use the tone described above."}
 ${storyInstructions}${caseStudyInstructions}
 
@@ -1249,19 +1266,19 @@ POST TYPE FORMATS:
 IF STORY:
 Hook (MUST be 7 to 8 words — count them. If question, must end with "?". No dash or em dash after the hook.)
 
-Opening paragraph (2 to 3 sentences)
+Opening (1 to 3 short sentences. Each sentence on its own line. Blank line after.)
 Cialdini Liking — make reader feel understood.
 
-Problem paragraph (2 to 3 sentences)
+Problem (1 to 3 short sentences. Each sentence on its own line. Blank line after.)
 Haddad PIG — Pain, Intensify, Gap.
 
-Story paragraph (2 to 3 sentences)
+Story (1 to 3 short sentences. Each sentence on its own line. Blank line after.)
 Godin specific moment plus Cialdini Social Proof.
 
-Insight paragraph (2 to 3 sentences)
+Insight (1 to 3 short sentences. Each sentence on its own line. Blank line after.)
 Ogilvy one clear idea in plain language.
 
-Outcome paragraph (2 to 3 sentences)
+Outcome (1 to 3 short sentences. Each sentence on its own line. Blank line after.)
 Cialdini Hope — warm and inspirational.
 
 Call to action (1 to 2 sentences)
@@ -1273,17 +1290,17 @@ Easy to answer, yes no or one word.
 IF INFOGRAPHIC:
 Hook (MUST be 7 to 8 words — count them. If question, must end with "?". No dash or em dash after the hook.)
 
-Opening statement (2 sentences)
+Opening statement (1 to 2 short sentences. Each sentence on its own line. Blank line after.)
 
-Key point 1 (2 sentences — standalone insight)
+Key point 1 (1 to 2 short sentences. Each sentence on its own line. Blank line after.)
 
-Key point 2 (2 sentences — standalone insight)
+Key point 2 (1 to 2 short sentences. Each sentence on its own line. Blank line after.)
 
-Key point 3 (2 sentences — standalone insight)
+Key point 3 (1 to 2 short sentences. Each sentence on its own line. Blank line after.)
 
-Key point 4 (2 sentences — standalone insight)
+Key point 4 (1 to 2 short sentences. Each sentence on its own line. Blank line after.)
 
-Key point 5 (2 sentences — standalone insight)
+Key point 5 (1 to 2 short sentences. Each sentence on its own line. Blank line after.)
 
 Call to action (1 to 2 sentences)
 
@@ -1292,15 +1309,15 @@ Engagement question (1 sentence)
 IF CASE STUDY:
 Hook (MUST be 7 to 8 words — count them. If question, must end with "?". No dash or em dash after the hook.)
 
-The situation (2 sentences — who and what problem)
+The situation (1 to 2 short sentences. Each sentence on its own line. Blank line after.)
 
-The struggle (2 sentences — what they tried)
+The struggle (1 to 2 short sentences. Each sentence on its own line. Blank line after.)
 
-The shift (2 sentences — what changed)
+The shift (1 to 2 short sentences. Each sentence on its own line. Blank line after.)
 
-The result (2 sentences — specific outcomes)
+The result (1 to 2 short sentences. Each sentence on its own line. Blank line after.)
 
-The lesson (2 sentences — what this means for the reader)
+The lesson (1 to 2 short sentences. Each sentence on its own line. Blank line after.)
 
 Call to action (1 to 2 sentences)
 
@@ -1309,23 +1326,31 @@ Engagement question (1 sentence)
 IF VALUE DRIVEN:
 Hook (MUST be 7 to 8 words — count them. If question, must end with "?". No dash or em dash after the hook.)
 
-Opening paragraph (2 to 3 sentences — name the problem clearly)
+Opening (1 to 3 short sentences — name the problem clearly. Each sentence on its own line. Blank line after.)
 
-The insight (2 to 3 sentences — the teaching or shift in thinking)
+The insight (1 to 3 short sentences — the teaching or shift in thinking. Each sentence on its own line. Blank line after.)
 
-Practical application (2 to 3 sentences — what the reader can do today)
+Practical application (1 to 3 short sentences — what the reader can do today. Each sentence on its own line. Blank line after.)
 
-Positive outcome (2 sentences — what life looks like after)
+Positive outcome (1 to 2 short sentences — what life looks like after. Each sentence on its own line. Blank line after.)
 
 Call to action (1 to 2 sentences)
 
 Engagement question (1 sentence)
 
+=== LINE FORMATTING RULES (MANDATORY — NO EXCEPTIONS) ===
+Every line of the post must contain only 1 or 2 or 3 SHORT sentences.
+After each line there MUST be a blank line break before the next line.
+Do NOT stack 4 or more sentences together in a single block.
+Short sentences only. Each sentence should be quick to read.
+This formatting makes the post scannable and easy to read on LinkedIn mobile.
+
 UNIVERSAL RULES FOR ALL POST TYPES:
-2 to 3 full sentences per paragraph only
-Blank line between every paragraph
+1 to 3 short sentences per line only
+Blank line between every line
 Simple language eighth grade reading level
 Maximum 15 words per sentence
+No commas anywhere in the post. Rewrite any sentence that needs a comma into two shorter sentences instead.
 No em dashes anywhere
 No hashtags anywhere
 No bullet points inside the post
@@ -1335,7 +1360,7 @@ Professional casual tone throughout
 Warm positive and inspirational throughout
 Full sentences only no fragments
 Written for the reader never the writer
-Post character output is 800 to 1500 characters
+Post character count MUST fall within the selected post length range: ${inputs.postLength === 'short' ? '400 to 600 characters' : inputs.postLength === 'medium' ? '900 to 1200 characters' : '1200 to 1600 characters'}. Count the characters before outputting. If outside the range then revise.
 End with an engagement question that is very easy to answer directed at the businesses ideal audience even if there is a CTA in the post at the end too.
 
 === FINAL QUALITY CHECK BEFORE OUTPUT ===
@@ -1379,6 +1404,8 @@ async function handlePostSubmit(event, isRetry = false) {
             audience: document.getElementById('post-audience').value.trim(),
             topic: document.getElementById('post-topic').value.trim(),
             tone: document.getElementById('post-tone').value.trim(),
+            website: document.getElementById('post-website').value.trim(),
+            postLength: document.getElementById('post-length').value,
             postType: postType,
             examples: document.getElementById('post-examples').value.trim(),
             storyDetails: postType === 'Story' ? document.getElementById('post-story-details').value.trim() : '',
