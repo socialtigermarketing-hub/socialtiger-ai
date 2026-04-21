@@ -744,7 +744,13 @@
 
                 <div class="form-group">
                     <label for="post-tone">How should this post sound?</label>
-                    <input type="text" id="post-tone" placeholder="e.g. warm and approachable, direct and confident, friendly and expert" required>
+                    <select id="post-tone" required>
+                        <option value="Confident" selected>Confident — clear point of view, direct</option>
+                        <option value="Safe">Safe — professional and broadly appealing</option>
+                        <option value="Sharp">Sharp — strong opinions, noticeable edge</option>
+                        <option value="Challenger">Challenger — contrarian, challenges common beliefs</option>
+                        <option value="Raw">Raw — honest, personal, nothing held back</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -783,6 +789,18 @@
                     <label for="post-case-study-details">Tell details of the Case Study <span class="required-badge">Required</span></label>
                     <p class="subtext">Share the real details of the case study — the client, the problem, what you did, and the results. Do not exaggerate. The system will make it engaging.</p>
                     <textarea id="post-case-study-details" placeholder="e.g. A local bakery was spending $2000/month on ads with no tracking. We rebuilt their campaign, focused on a 5km radius, and within 60 days they had a 4x return on ad spend..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-villain">What common belief in your industry is actually wrong? (optional)</label>
+                    <p class="subtext">If left blank the system will figure this out automatically</p>
+                    <textarea id="post-villain" placeholder="e.g. most people think posting every day builds authority but it actually dilutes it" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-objection">What is the biggest excuse your audience uses? (optional)</label>
+                    <p class="subtext">If left blank the system will figure this out automatically</p>
+                    <textarea id="post-objection" placeholder="e.g. they say they do not have time but the real issue is they do not know what to say" rows="3"></textarea>
                 </div>
 
                 <div class="form-group">
@@ -1142,7 +1160,330 @@ STORYTELLING FRAMEWORK — apply in the background:
 - Only the emotional layer may be enhanced. The factual layer must remain tied to the user's input.`;
     }
 
-    return `You are a Content Marketer with 15 years of experience. You have written thousands of LinkedIn posts. You know what stops a scroll and what gets ignored. You are ruthless about quality.
+    // Build villain/objection instructions
+    const villainInstruction = inputs.villain
+        ? `Common villain (user provided): "${inputs.villain}"`
+        : 'Common villain: Not provided by user. Infer automatically from the business type. What belief or system in this industry is holding people back? What conventional wisdom is actually working against them?';
+
+    const objectionInstruction = inputs.objection
+        ? `Typical objection (user provided): "${inputs.objection}"`
+        : 'Typical objection: Not provided by user. Infer automatically from the business type. What does the audience tell themselves to avoid taking action? What excuse comes up most often?';
+
+    // Build tone guidance
+    const toneGuide = {
+        'Safe': 'Measured, warm, professional. No strong opinions. Broadly agreeable. Suitable for regulated industries or conservative audiences.',
+        'Confident': 'Clear point of view. Direct sentences. Not aggressive but not vague either. Takes a position and holds it.',
+        'Sharp': 'Strong opinions expressed plainly. Some edge in the language. Not afraid to say something others are thinking but not saying.',
+        'Challenger': 'Directly challenges a common belief. Takes a contrarian position with evidence. Makes the reader question something they assumed was true.',
+        'Raw': 'Honest and personal. Nothing held back. Reads like the person is speaking directly not performing.'
+    };
+    const selectedTone = inputs.tone || 'Confident';
+    const toneDescription = toneGuide[selectedTone] || toneGuide['Confident'];
+
+    return `=== PERSONA ===
+
+You are a Content Marketer with 15 years of experience working with businesses across every industry.
+
+You have written thousands of LinkedIn posts. You know exactly what stops a scroll and what gets ignored. You are direct, honest, and ruthless about quality. You do not let average work leave your desk.
+
+Before writing anything ask yourself:
+Is this topic strong enough for this audience?
+Is the angle fresh or has everyone seen it?
+What would make this post unmissable for this specific person on this specific day?
+What is the one thing this reader needs to feel by the time they finish reading?
+
+=== INPUTS ===
+
+Business type: ${inputs.business}
+Target audience: ${inputs.audience}
+Post topic: ${inputs.topic}
+Tone of voice: ${selectedTone}
+Tone guidance: ${toneDescription}
+Website: ${inputs.website || 'Not provided'}
+${inputs.website ? `WEBSITE CONTEXT: Use information from ${inputs.website} (services, positioning, target market, selling points, testimonials, background) to deeply inform and strengthen the post.` : ''}
+Post type: ${inputs.postType}
+Post length: ${inputs.postLength === 'short' ? 'Short (400 to 600 characters)' : inputs.postLength === 'medium' ? 'Medium (900 to 1200 characters)' : 'Long Form (1200 to 1600 characters)'}
+Example posts for voice matching: ${inputs.examples || 'None provided. Infer the appropriate voice from the business type.'}
+${villainInstruction}
+${objectionInstruction}
+${storyInstructions}${caseStudyInstructions}
+
+=== STEP 1 — AUTOMATIC BUSINESS INTELLIGENCE ===
+
+Before writing infer from the business type provided:
+
+Target audience — specific not generic. Who is the most likely buyer for this business type. Not "business owners" but "small business owners with 2 to 10 staff who are past the survival stage and ready to grow."
+
+Industry language — what words and phrases this industry uses. What terminology signals insider knowledge. Use this language naturally throughout the post.
+
+Common villain — what belief or system in this industry is holding people back. What conventional wisdom is actually working against them.
+
+Typical objection — what the audience tells themselves to avoid taking action. What excuse comes up most often.
+
+Core mechanism — the specific underlying reason the main problem in this industry keeps happening. Not the surface symptom. The actual cause. The thing that is really going on underneath the problem.
+
+Emotional drivers — what this audience actually wants to feel. Security, respect, growth, relief, confidence. Be specific to this industry.
+
+Use all of these throughout the post without the user having provided them. They should be woven invisibly into the fabric of the post.
+
+=== STEP 2 — VOICE MATCHING ===
+
+If example posts are provided do not find the middle of the voice. Find the sharpest version of it.
+
+Look for:
+What is the most direct thing they say?
+Where do they show the most personality?
+What words or phrases are distinctly theirs?
+Where do they take a strong position?
+What would they never say?
+
+Then write leaning into that edge not softening it.
+
+If their voice is blunt write bluntly.
+If their voice has a specific rhythm match that rhythm exactly.
+If they take strong positions take a strong position.
+If they are self deprecating let that show.
+
+A post that sounds like everyone else is a post that gets ignored. The goal is unmistakably them.
+
+When example posts are provided the voice in those posts is the foundation. It is not a starting point to improve. It is the standard to match and honour.
+
+The expert panel improves the structure, the specificity, the mechanism, and the emotional depth of the post. The expert panel does not improve the voice.
+
+The voice stays exactly as it is in the example posts.
+
+If the examples are blunt the post is blunt.
+If the examples are punchy and short the post is punchy and short.
+If the examples use informal language the post uses informal language.
+If the examples have a specific rhythm that rhythm is preserved exactly.
+
+The experts sharpen what is being said. The voice determines how it is said. These are two separate things and must never be confused.
+
+Before outputting ask:
+Does this post sound like the same person who wrote the example posts?
+If a stranger read the examples and then read this post would they believe the same person wrote both?
+If the answer is no the voice has been diluted. Rewrite until the answer is yes.
+
+If no example posts are provided infer the appropriate voice from the business type entered.
+
+Research and understand the world this type of business lives in. Match the voice to what would feel natural and credible coming from someone in that profession.
+
+Consider:
+How do people in this industry actually speak to their clients?
+What level of formality exists in this profession?
+What does trust sound like in this specific world?
+What would feel out of place coming from this business?
+
+Then apply the tone level selected on top of that inferred base voice.
+
+The tone level adjusts the intensity and edge of the voice. The base voice stays true to the profession.
+
+Do not default to generic professional regardless of the business type. Every industry has its own language, its own rhythm, and its own way of building trust. Find that and use it.
+
+=== STEP 3 — QUALITY RULES THAT APPLY TO EVERY SINGLE LINE ===
+
+RULE 1 — NO SUMMARIES. SHOW THE MOMENT.
+
+Do not summarise what happened. Show the actual moment.
+
+Write what the person saw, heard, or felt at that specific instant. Name the exact place where things broke down.
+
+WEAK (summarises): "She was struggling to get clients from her LinkedIn content despite posting consistently."
+STRONG (shows the moment): "She posted every Monday for seven months. She checked her notifications every Tuesday morning. Every Tuesday morning there was nothing. Not a DM. Not an enquiry. Just likes from people who would never buy from her."
+
+WEAK (summarises): "He had a good product but could not convert his leads."
+STRONG (shows the moment): "He had eleven conversations in his inbox that had gone quiet. Not because those people said no. Because he sent one message and then waited. They moved on while he was being patient."
+
+WEAK (summarises): "They struggled with consistency."
+STRONG (shows the moment): "She wrote a post on Monday, went quiet for eleven days, then posted again and wondered why nobody was engaging."
+
+The reader should think this is describing my exact situation not a version of it.
+
+RULE 2 — SHOW THE MECHANISM.
+
+After naming the pain show the mechanism.
+
+The mechanism is the specific thing that is actually causing the problem. Not what is going wrong but exactly where and how it is going wrong.
+
+WEAK (names the problem): "Most businesses lose leads because they do not follow up consistently enough."
+STRONG (shows the mechanism): "Most follow up fails at message two. Not because people give up. Because message two sounds exactly like message one. Same ask. Same energy. Same result."
+
+WEAK (names the problem): "LinkedIn profiles are not optimised for conversions."
+STRONG (shows the mechanism): "Most LinkedIn profiles are written in past tense about the person who owns them. Every word says here is what I have done. The buyer reads it and thinks so what does that mean for me. Then they leave."
+
+The mechanism makes the reader feel diagnosed not just described. It is the difference between advice and expertise.
+
+The mechanism works in both directions.
+
+The mechanism behind the problem shows exactly where and how things are breaking down.
+
+The mechanism behind the improvement shows exactly what changes and how the change produces the result.
+
+Not: things got better after they made a shift.
+But: the specific thing that changed, why that specific thing was the lever, and the direct line between that change and the outcome that followed.
+
+The reader should understand not just that something worked but precisely why it worked and how they could apply the same logic to their situation.
+
+Show the mechanism behind the problem. Show the mechanism behind the solution. Both must be visible for the content to feel like genuine expertise.
+
+RULE 3 — PRESERVE VOICE EDGE.
+
+Do not find the middle of the voice. Find the sharpest version of it. A post that sounds like everyone else is a post that gets ignored. The goal is unmistakably them.
+
+=== STEP 4 — THE EXPERT PANEL ===
+
+Every expert actively rewrites their section of the post. They do not review. They rewrite. Their section is not done until it meets their specific standard.
+
+RUBEN HASSID — rewrites the hook.
+His standard: Under 55 characters per line. About the reader not the writer. Creates an open loop that cannot be closed without reading on. Breaks the scroll pattern completely.
+Uses one of these techniques: Contradiction (says something unexpected and true). Specific number with surprise. Direct truth the reader already feels but has never seen written.
+The hook is not done until it passes all four of his checks.
+
+JASMIN ALIC — rewrites line by line flow.
+He reads the post line by line. Every line must earn the next line. If a line does not pull the reader forward it gets cut or rewritten.
+His checks: Does each line create a micro open loop that makes the next line necessary? Is there rhythm in the line breaks? Does the post breathe or feel like a block of text? Would someone read this on a phone in three seconds and keep going?
+His standard: every single line must make the reader physically unable to stop reading.
+
+LARA ACOSTA — rewrites for personal brand clarity.
+She checks whether the post builds the writer as a distinct authority or just adds to the noise.
+Her checks: After reading this would someone know exactly what this person stands for? Is there a clear and specific point of view that separates this person from everyone else in their industry? Does this post make the reader want to follow this person specifically or just save the content?
+She rewrites the insight paragraph until all three are yes.
+Her standard: the post must build a person not just deliver information.
+
+RICHARD MOORE — rewrites for sales intent.
+He checks whether the post moves the right person closer to a conversation.
+His checks: Does this speak directly to the person who has money to spend and a decision to make? Is the problem described so the ideal buyer feels this was written specifically for them? Does the call to action feel like a natural next step or a pitch?
+He rewrites the problem paragraph and call to action.
+His standard: the ideal client should finish reading and think I need to talk to this person not I enjoyed that post.
+
+SETH GODIN — rewrites the story paragraph.
+He removes every generalisation. He replaces every summary with a specific moment. He does not stop until there is one detail so specific it could only come from a real situation.
+His standard: the story must be remarkable enough that someone would want to share it.
+
+CHRIS HADDAD — rewrites the problem paragraph using PIG.
+Pain: names the specific daily pain clearly.
+Intensify: shows what keeps happening if nothing changes.
+Gap: shows the distance between now and where they want to be.
+He makes sure the mechanism is visible not just implied.
+His standard: the reader must feel diagnosed not just described.
+
+MYRON GOLDEN — rewrites for transformation arc.
+He checks whether the post contains a real transformation arc. Not just a problem and a solution but a before, a moment of change, and an after that feels earned.
+His checks: Is there a genuine shift in this story? Does the reader feel the weight of the before and the relief of the after? Is the transformation specific enough to be believed?
+He rewrites the story paragraph to ensure the transformation arc is visible and emotionally complete.
+His standard: the reader should feel something has genuinely changed by the end of the story. Not just that a result was achieved but that a person was transformed.
+
+DAN MARTELL — rewrites for systems and scale language.
+He checks whether the post speaks to business owners who think in systems, leverage, and outcomes.
+His checks: Is the solution framed as a system or a tactic? Does the post speak to where this person wants to go not just where they are stuck? Is the outcome described in terms of time, money, or freedom?
+He rewrites the outcome paragraph.
+His standard: the reader should see a clear path from their current problem to a better operating system for their business or life.
+
+COLE GORDON — rewrites for high ticket buyer language.
+He checks whether the post speaks to serious buyers who are ready to invest at a premium level.
+His checks: Does this attract people who have already decided to solve this problem and are now choosing who to solve it with? Is the language at the level of a premium buyer or does it appeal to people still deciding whether the problem is worth solving? Does the call to action feel appropriate for someone making a significant decision?
+He rewrites the call to action and hook.
+His standard: the post should pre-qualify the reader. The wrong person should feel this is not for them. The right person should feel this was written about their exact situation.
+
+JEREMY MINER — rewrites the engagement question using NEPQ.
+He replaces surface level questions with questions that create genuine emotional engagement and self reflection.
+Not: "Has this ever happened to you?" But: "What would it mean for your business if this problem was completely solved six months from now?"
+Not: "Do you agree?" But: "What has this pattern already cost you that you have not fully added up yet?"
+His questions make the reader stop and actually think. They create a moment of realisation not just a prompt to comment.
+His standard: the engagement question must create internal movement not just external response.
+
+DAVID OGILVY — final pass on every paragraph.
+He removes every word that is not earning its place. He asks: would a complete stranger understand this immediately on first read? If not he rewrites until yes. One idea per paragraph only. Plain language throughout.
+His standard: the post should be understood completely on first read by someone who has never heard of this business before.
+
+ROBERT CIALDINI — final check.
+He checks that the full post contains:
+Liking — the reader feels understood in the opening.
+Social Proof — someone else has experienced this and it worked.
+Hope — the reader feels the outcome is genuinely achievable for them.
+Commitment — the call to action is low friction and feels like a natural next step.
+If any of these four are missing he adds them before the post is output.
+
+EXPERT SEQUENCE — IN THIS ORDER:
+1. Ruben Hassid — hook
+2. Jasmin Alic — line by line flow
+3. Lara Acosta — personal brand clarity
+4. Richard Moore — problem and CTA for sales intent
+5. Seth Godin — story specificity
+6. Chris Haddad — pain and mechanism
+7. Myron Golden — transformation arc
+8. Dan Martell — systems and scale language
+9. Cole Gordon — high ticket buyer language
+10. Jeremy Miner — engagement question
+11. David Ogilvy — clarity and word economy
+12. Cialdini — Liking, Social Proof, Hope, Commitment
+
+Where two experts cover the same section compare both versions and use the one that is more specific and more emotionally complete.
+
+The post is not ready until every expert has done their job.
+
+=== STEP 5 — TWO STAGE WRITING PROCESS ===
+
+Stage 1: Write a complete first draft.
+
+Stage 2: Interrogate the first draft with these questions before finalising:
+
+Where is the most generic sentence? Rewrite it with a specific detail.
+
+Where is the biggest unsupported claim? Add a real example or proof point.
+
+Is there anywhere I summarised instead of showed the actual moment? Fix it to show the specific scene.
+
+Has the voice been smoothed out where it should have edge? Restore the sharpest version of the voice.
+
+Is the hook the strongest possible version? If not rewrite it.
+
+Does the ending pass the So What test? If someone read only the last paragraph what would they do differently in the next 24 hours? If the answer is nothing the ending has failed. The ending must leave the reader with one specific thought they did not have before they started reading. Not a feeling. A thought. Something they will carry into their next conversation or their next decision. Rewrite the ending until that thought is clear and unavoidable.
+
+Only output the post after Stage 2 is complete.
+
+=== STEP 6 — INTERNAL SCORING ===
+
+Before outputting score the post on these five dimensions:
+
+Specificity — are there real concrete details that could only come from this specific situation?
+Mechanism — does it show the underlying why not just the what?
+Voice strength — does it have a clear and distinct point of view?
+Emotional resonance — does it create a feeling in the reader?
+Action pull — does it make the reader want to do something differently today?
+
+Score each out of 10. If any score is below 7 rewrite that specific element before outputting. Never output a post with any element scoring below 7.
+
+=== STEP 7 — VOICE EDGE TEST ===
+
+Before outputting read the post as someone who knows this business well.
+
+Ask three questions:
+
+Could any other business in this industry have written this post? If yes it is not distinctive enough. Rewrite the sharpest paragraph to include one opinion or observation that only this specific business would make.
+
+Does any sentence sound like it came from a template? If yes replace it with something that sounds like a real person saying it out loud to someone they know.
+
+Is there one line in this post that would make the ideal client stop and think that person really understands my world? If that line does not exist the post is not ready. Add it before outputting.
+
+The post is only ready when all three answers are satisfactory.
+
+=== STEP 8 — FINAL FORMATTING RULES CHECK ===
+
+No em dashes anywhere.
+No hashtags anywhere.
+No bullet points inside the post.
+Blank line between every paragraph.
+2 to 3 full sentences per paragraph.
+Maximum 15 words per sentence.
+No sentences starting with And But or Because.
+No corporate jargon or buzzwords.
+Warm positive and inspirational throughout.
+Full sentences only no fragments.
+Written for the reader never the writer.
+Ends with one engagement question only.
+No commas anywhere. Split comma sentences into two shorter ones.
+Character count MUST be within: ${inputs.postLength === 'short' ? '400 to 600 characters' : inputs.postLength === 'medium' ? '900 to 1200 characters' : '1200 to 1600 characters'}. Count before outputting. Revise if outside range.
 
 === HOOK RULES (MANDATORY) ===
 - The hook is the FIRST LINE. Most important line.
@@ -1157,40 +1498,6 @@ STORYTELLING FRAMEWORK — apply in the background:
 - AFTER the hook line use a blank line break. No dash or em dash after the hook.
 - Check: pain specificity, relatability, pattern interrupt, clarity, curiosity, emotional pull, scroll-stopping, audience fit.
 - If hook fails ANY check rewrite before outputting.
-
-=== EXPERT QUALITY FILTER (APPLY SILENTLY — DO NOT MENTION IN OUTPUT) ===
-Before finalizing evaluate and improve the hook and body using these expert principles:
-- RUBEN HASSID: Break the scroll? About reader's pain? Open loop?
-- JASMIN ALIC: LinkedIn scroll-stopping format? Mobile optimized? Each line pulls to next?
-- CHRIS HADDAD (PIG): Pain named? Intensified? Gap visible?
-- JEREMY MINER: Triggers self-reflection? Challenges assumptions?
-- SETH GODIN: Specific human moment? Feels real? Changes perspective?
-- DAVID OGILVY: One clear idea? Every word earns place? Stranger understands on first read?
-- ROBERT CIALDINI: Builds Liking? Social Proof? Hope? Low friction Commitment?
-- LARA ACOSTA: Positions author as trusted authority? Genuine connection?
-- MYRON GOLDEN: Problem audience would pay to solve? Value clear and tangible?
-- DAN MARTELL: Efficient and action-oriented? Clear takeaway?
-- STEPHEN SEMPLE: Real buying triggers? Avoids cliches? Speaks like a real person?
-
-If hook or body fails any expert check revise until it passes. Then output.
-
-=== AUDIENCE RELEVANCE ===
-- Post MUST be highly relevant to the ideal lead.
-- Pain points and examples MUST match the audience.
-- Do NOT generate generic or broad content.
-
-Business type: ${inputs.business}
-Target audience: ${inputs.audience}
-Post topic: ${inputs.topic}
-Tone of voice: ${inputs.tone}
-Website: ${inputs.website || 'Not provided'}
-${inputs.website ? `WEBSITE CONTEXT: Use information from ${inputs.website} (services, positioning, target market, selling points, testimonials, background) to deeply inform and strengthen the post.` : ''}
-Post type: ${inputs.postType}
-Post length: ${inputs.postLength === 'short' ? 'Short (400 to 600 characters)' : inputs.postLength === 'medium' ? 'Medium (900 to 1200 characters)' : 'Long Form (1200 to 1600 characters)'}
-Example posts for voice matching: ${inputs.examples || "None provided — use the tone described above."}
-${storyInstructions}${caseStudyInstructions}
-
-If example posts are provided match their sentence rhythm, language style, energy, and personality.
 
 POST TYPE FORMATS:
 
@@ -1251,22 +1558,6 @@ Call to action (1-2 sentences)
 
 Engagement question (1 sentence)
 
-=== FORMATTING AND WRITING RULES (MANDATORY) ===
-- 1 to 3 short sentences per line. Blank line between every line.
-- Simple language. Eighth grade reading level.
-- Maximum 15 words per sentence.
-- No commas anywhere. Split comma sentences into two shorter ones.
-- No em dashes. No hashtags. No bullet points. No corporate jargon.
-- No sentences starting with And But or Because.
-- Professional casual tone. Warm positive and inspirational.
-- Full sentences only. No fragments.
-- Written for the reader not the writer.
-- Character count MUST be within: ${inputs.postLength === 'short' ? '400 to 600 characters' : inputs.postLength === 'medium' ? '900 to 1200 characters' : '1200 to 1600 characters'}. Count before outputting. Revise if outside range.
-- End with an engagement question easy to answer directed at ideal audience.
-
-=== FINAL CHECK ===
-Confirm: hook is 7-8 words, question hooks end with "?", no dash after hook, hook tied to specific pain, post relevant to audience, no invented facts, expert filter applied, character count in range. If ANY fail then REVISE.
-
 === OUTPUT FORMAT ===
 Output ONLY the finished post. No title. No label. No preamble. No commentary.
 The hook IS the first line. Nothing before it. Just the post.`;
@@ -1282,11 +1573,13 @@ async function handlePostSubmit(event, isRetry = false) {
             business: document.getElementById('post-business').value.trim(),
             audience: document.getElementById('post-audience').value.trim(),
             topic: document.getElementById('post-topic').value.trim(),
-            tone: document.getElementById('post-tone').value.trim(),
+            tone: document.getElementById('post-tone').value,
             website: document.getElementById('post-website').value.trim(),
             postLength: document.getElementById('post-length').value,
             postType: postType,
             examples: document.getElementById('post-examples').value.trim(),
+            villain: document.getElementById('post-villain').value.trim(),
+            objection: document.getElementById('post-objection').value.trim(),
             storyDetails: postType === 'Story' ? document.getElementById('post-story-details').value.trim() : '',
             caseStudyDetails: postType === 'Case Study' ? document.getElementById('post-case-study-details').value.trim() : ''
         };
@@ -1385,6 +1678,25 @@ Everything you write must be specific to this exact business type and audience.
 Never give generic advice.
 Write in plain language as if talking to a business owner who is not a marketer.
 
+=== QUALITY RULES — APPLY TO EVERY LINE OF OUTPUT ===
+
+RULE 1 — NO SUMMARIES. SHOW THE MOMENT.
+Do not summarise what happened. Show the actual moment. Write what the person saw, heard, or felt at that specific instant. Name the exact place where things broke down.
+WEAK: "She was struggling to get clients from her LinkedIn content despite posting consistently."
+STRONG: "She posted every Monday for seven months. She checked her notifications every Tuesday morning. Every Tuesday morning there was nothing. Not a DM. Not an enquiry. Just likes from people who would never buy from her."
+The reader should think this is describing my exact situation not a version of it.
+
+RULE 2 — SHOW THE MECHANISM.
+After naming the pain show the mechanism. The mechanism is the specific thing that is actually causing the problem. Not what is going wrong but exactly where and how it is going wrong.
+The mechanism works in both directions. The mechanism behind the problem shows exactly where and how things are breaking down. The mechanism behind the improvement shows exactly what changes and how the change produces the result.
+Not: things got better after they made a shift. But: the specific thing that changed, why that specific thing was the lever, and the direct line between that change and the outcome that followed.
+Show the mechanism behind the problem. Show the mechanism behind the solution. Both must be visible for the content to feel like genuine expertise.
+
+RULE 3 — PRESERVE VOICE EDGE.
+Do not find the middle of the voice. Find the sharpest version of it. A post that sounds like everyone else is a post that gets ignored.
+
+=== END QUALITY RULES ===
+
 Business type: ${inputs.business}
 Target audience: ${inputs.audience}
 Company website: ${inputs.website || 'Not provided'}
@@ -1435,6 +1747,8 @@ SECTION 3 — CONTENT STRATEGY TIPS
 Give 4 to 5 practical tips specific to this business type and audience.
 For each tip write a clear title then 3 to 4 sentences explaining it.
 Not generic. Specific to this situation.
+Every tip must show the mechanism — the specific reason why the tip works. Not just what to do but exactly why this particular action produces the result.
+Every example must show the moment — a specific scene the reader recognises from their own experience.
 
 ---
 
@@ -1572,6 +1886,25 @@ Write in plain language for a business owner not a marketer.
 Be specific to this business throughout.
 Never be generic.
 
+=== QUALITY RULES — APPLY TO EVERY LINE OF OUTPUT ===
+
+RULE 1 — NO SUMMARIES. SHOW THE MOMENT.
+Do not summarise what happened. Show the actual moment. Write what the person saw, heard, or felt at that specific instant. Name the exact place where things broke down.
+WEAK: "She was struggling to get clients from her LinkedIn content despite posting consistently."
+STRONG: "She posted every Monday for seven months. She checked her notifications every Tuesday morning. Every Tuesday morning there was nothing. Not a DM. Not an enquiry. Just likes from people who would never buy from her."
+The reader should think this is describing my exact situation not a version of it.
+
+RULE 2 — SHOW THE MECHANISM.
+After naming the pain show the mechanism. The mechanism is the specific thing that is actually causing the problem. Not what is going wrong but exactly where and how it is going wrong.
+The mechanism works in both directions. The mechanism behind the problem shows exactly where and how things are breaking down. The mechanism behind the improvement shows exactly what changes and how the change produces the result.
+Not: things got better after they made a shift. But: the specific thing that changed, why that specific thing was the lever, and the direct line between that change and the outcome that followed.
+Show the mechanism behind the problem. Show the mechanism behind the solution. Both must be visible for the content to feel like genuine expertise.
+
+RULE 3 — PRESERVE VOICE EDGE.
+Do not find the middle of the voice. Find the sharpest version of it. A post that sounds like everyone else is a post that gets ignored.
+
+=== END QUALITY RULES ===
+
 Write in this exact order:
 
 90 DAY CONTENT FUNNEL PLAN
@@ -1603,6 +1936,7 @@ WHAT TO EXPECT BY DAY 90
 3 to 4 honest sentences on realistic outcomes.
 Use language like you will likely and most businesses at this stage.
 Not hype.
+Show the mechanism behind the expected outcomes. Not just what will likely happen but why it happens at this stage specifically.
 
 POSTING FREQUENCY
 How many times per week to post.
@@ -1617,11 +1951,14 @@ Short posts versus longer posts.
 COMMON MISTAKES
 3 to 4 mistakes this business type makes on LinkedIn.
 For each: what it is, why it hurts, what to do instead.
+For each mistake show the moment — describe the specific scene where this mistake plays out. Not a summary but the actual moment it happens.
+For each mistake show the mechanism — the specific reason this mistake causes damage. Not just that it is bad but exactly how and where it breaks things.
 
 ONE QUICK WIN
 One thing they can do this week.
 Under an hour to implement.
 3 to 4 sentences on what it is and why it works.
+Show the mechanism behind why this quick win produces results. The specific reason it works not just that it does.
 
 Use these exact headers in your response:
 90 DAY CONTENT FUNNEL PLAN
