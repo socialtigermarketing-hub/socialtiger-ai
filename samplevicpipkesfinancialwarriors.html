@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vic Pipke's Financial Warriors | Financial Guidance for Canadian Families</title>
+<meta name="description" content="Financial guidance for Canadian families who want clarity and confidence. Book a short conversation with Vic Pipke and take the next step toward your financial future.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap');
+:root{--navy:#0F2742;--navy2:#1E3A5A;--gold:#C8A96B;--cream:#F8F6F2;--charcoal:#25313D;--slate:#7E8F97;--white:#ffffff;--radius:12px;--shadow:0 4px 24px rgba(15,39,66,.08)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Inter',sans-serif;color:var(--charcoal);background:var(--cream);line-height:1.7;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Outfit',sans-serif;color:var(--navy);line-height:1.25;font-weight:700}
+h1{font-size:clamp(2.2rem,5vw,3.4rem)}
+h2{font-size:clamp(1.6rem,3.5vw,2.4rem)}
+h3{font-size:clamp(1.1rem,2vw,1.35rem)}
+p{max-width:640px;color:var(--charcoal)}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+.container{width:90%;max-width:1100px;margin:0 auto}
+.site-header{position:fixed;top:0;left:0;right:0;z-index:1000;padding:18px 0;transition:all .4s ease}
+.site-header.scrolled{background:rgba(15,39,66,.97);backdrop-filter:blur(12px);padding:10px 0;box-shadow:0 2px 20px rgba(0,0,0,.15)}
+.header-inner{display:flex;align-items:center;justify-content:space-between}
+.header-logo img{height:72px;transition:height .3s ease}
+.scrolled .header-logo img{height:56px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 32px;border-radius:50px;font-family:'Outfit',sans-serif;font-weight:600;font-size:.95rem;cursor:pointer;border:none;transition:all .3s ease;text-align:center}
+.btn-primary{background:var(--gold);color:var(--navy);box-shadow:0 4px 16px rgba(200,169,107,.3)}
+.btn-primary:hover{background:#d4b87a;transform:translateY(-2px);box-shadow:0 6px 24px rgba(200,169,107,.4)}
+.btn-outline{background:transparent;color:var(--cream);border:1.5px solid rgba(200,169,107,.5)}
+.btn-outline:hover{border-color:var(--gold);background:rgba(200,169,107,.1)}
+.header-cta .btn{padding:10px 24px;font-size:.85rem}
+.hero{min-height:100vh;display:flex;align-items:center;background:linear-gradient(165deg,var(--navy) 0%,var(--navy2) 55%,#1a3352 100%);position:relative;overflow:hidden;padding:120px 0 80px}
+.hero::before{content:'';position:absolute;top:-50%;right:-30%;width:80%;height:200%;background:radial-gradient(ellipse,rgba(200,169,107,.06) 0%,transparent 70%);pointer-events:none}
+.hero-content{position:relative;z-index:2;max-width:720px}
+.hero h1{color:var(--cream);margin-bottom:20px}
+.hero h1 span{color:var(--gold)}
+.hero-sub{color:rgba(248,246,242,.75);font-size:1.1rem;margin-bottom:36px;max-width:580px;line-height:1.8}
+.hero-micro{color:var(--slate);font-size:.85rem;margin-top:14px;letter-spacing:.5px}
+.trust-strip{padding:80px 0;background:var(--cream)}
+.trust-header{text-align:center;margin-bottom:48px}
+.trust-header h2{margin-bottom:8px}
+.trust-header p{margin:0 auto;color:var(--slate)}
+.testimonial-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:32px}
+.testimonial-card{background:var(--white);border-radius:var(--radius);padding:36px;box-shadow:var(--shadow);border:1px solid rgba(126,143,151,.1);transition:transform .3s ease,box-shadow .3s ease}
+.testimonial-card:hover{transform:translateY(-4px);box-shadow:0 8px 32px rgba(15,39,66,.12)}
+.stars{display:flex;gap:3px;margin-bottom:16px}
+.stars svg{width:18px;height:18px;fill:var(--gold)}
+.testimonial-card blockquote{font-size:1rem;line-height:1.8;color:var(--charcoal);font-style:italic;margin-bottom:20px}
+.testimonial-author{display:flex;align-items:center;gap:12px}
+.author-avatar{width:42px;height:42px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;color:var(--gold);font-family:'Outfit',sans-serif;font-weight:700;font-size:.9rem}
+.author-info strong{display:block;font-size:.9rem;color:var(--navy)}
+.author-info span{font-size:.8rem;color:var(--slate)}
+.trust-cta{text-align:center;margin-top:48px}
+.clarity-section{padding:80px 0;background:var(--white)}
+.clarity-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.clarity-bullets{list-style:none;margin:24px 0 32px}
+.clarity-bullets li{padding:10px 0;padding-left:32px;position:relative;color:var(--charcoal);font-size:.95rem}
+.clarity-bullets li::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;background:rgba(200,169,107,.15);border:2px solid var(--gold)}
+.clarity-visual{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--radius);padding:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:340px}
+.clarity-visual .chat-icon{width:64px;height:64px;border-radius:50%;background:rgba(200,169,107,.15);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.clarity-visual .chat-icon svg{width:28px;height:28px;stroke:var(--gold);fill:none}
+.clarity-visual h3{color:var(--cream);margin-bottom:8px;font-size:1.3rem}
+.clarity-visual p{color:var(--slate);font-size:.9rem}
+.story-section{padding:80px 0;background:var(--cream)}
+.story-inner{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.story-text{text-align:left}
+.story-text h2{margin-bottom:24px}
+.story-text p{margin:0 0 16px;max-width:100%}
+.story-cta{margin-top:32px}
+.story-photo img{width:100%;border-radius:var(--radius);object-fit:cover;box-shadow:0 8px 40px rgba(15,39,66,.12)}
+.credibility-strip{padding:60px 0;background:var(--navy);overflow:hidden}
+.cred-inner{display:flex;align-items:center;gap:48px}
+.cred-photo{flex-shrink:0;width:160px}
+.cred-photo img{width:160px;height:200px;object-fit:cover;border-radius:var(--radius);border:3px solid rgba(200,169,107,.3)}
+.cred-items{display:flex;flex-wrap:wrap;gap:16px 32px;flex:1}
+.cred-item{display:flex;align-items:center;gap:10px;color:var(--cream);font-size:.9rem;white-space:nowrap}
+.cred-item .cred-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
+.cred-text{margin-top:24px;color:rgba(248,246,242,.85);font-size:1rem;line-height:1.7;max-width:600px;font-style:italic}
+.video-section{padding:80px 0;background:var(--white)}
+.video-inner{max-width:800px;margin:0 auto;text-align:center}
+.video-inner h2{margin-bottom:12px}
+.video-inner>p{margin:0 auto 32px;color:var(--slate)}
+.video-wrap{position:relative;padding-bottom:56.25%;border-radius:var(--radius);overflow:hidden;box-shadow:0 8px 40px rgba(15,39,66,.15)}
+.video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+.video-cta{margin-top:36px}
+.help-section{padding:80px 0;background:var(--cream)}
+.help-header{text-align:center;margin-bottom:48px}
+.help-header p{margin:0 auto;color:var(--slate)}
+.help-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;margin-bottom:48px}
+.help-card{background:var(--white);border-radius:var(--radius);padding:32px;box-shadow:var(--shadow);border:1px solid rgba(126,143,151,.08);transition:transform .3s ease,box-shadow .3s ease}
+.help-card:hover{transform:translateY(-4px);box-shadow:0 8px 32px rgba(15,39,66,.12)}
+.help-card .card-icon{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--navy),var(--navy2));display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.help-card .card-icon svg{width:22px;height:22px;stroke:var(--gold);fill:none}
+.help-card h3{margin-bottom:10px;font-size:1.1rem}
+.help-card p{font-size:.9rem;color:var(--slate);line-height:1.7}
+.help-cta{text-align:center}
+.build-section{padding:80px 0;background:var(--navy)}
+.build-inner{max-width:640px;margin:0 auto;text-align:center}
+.build-inner h2{color:var(--cream);margin-bottom:20px}
+.build-inner p{color:rgba(248,246,242,.7);margin:0 auto 12px}
+.build-cta{margin-top:32px}
+.invite-section{padding:80px 0;background:var(--cream)}
+.invite-inner{max-width:640px;margin:0 auto;text-align:center}
+.invite-inner h2{margin-bottom:20px}
+.invite-inner p{margin:0 auto 12px;color:var(--charcoal)}
+.invite-cta{margin-top:28px}
+.final-section{padding:100px 0;background:linear-gradient(165deg,var(--navy) 0%,var(--navy2) 100%);text-align:center;position:relative}
+.final-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(200,169,107,.06),transparent 70%)}
+.final-inner{position:relative;z-index:2;max-width:600px;margin:0 auto}
+.final-inner h2{color:var(--cream);margin-bottom:16px}
+.final-inner p{color:rgba(248,246,242,.7);margin:0 auto 32px}
+.site-footer{padding:32px 0;background:var(--charcoal);text-align:center}
+.site-footer p{color:var(--slate);font-size:.8rem;margin:0 auto}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.stagger-1{transition-delay:.1s}
+.stagger-2{transition-delay:.2s}
+.stagger-3{transition-delay:.3s}
+.stagger-4{transition-delay:.4s}
+.mobile-sticky-cta{display:none;position:fixed;bottom:0;left:0;right:0;padding:12px 16px;background:rgba(15,39,66,.97);backdrop-filter:blur(12px);z-index:999;border-top:1px solid rgba(200,169,107,.2)}
+.mobile-sticky-cta .btn{width:100%;padding:14px;font-size:.95rem}
+@media(max-width:768px){
+.hero{min-height:auto;padding:140px 0 60px}
+.hero h1{font-size:1.8rem}
+.hero-sub{font-size:.95rem}
+.clarity-inner{grid-template-columns:1fr;gap:32px}
+.clarity-visual{min-height:200px;padding:32px}
+.testimonial-grid{grid-template-columns:1fr}
+.story-inner{grid-template-columns:1fr;gap:32px}
+.story-photo{order:-1}
+.cred-inner{flex-direction:column;text-align:center}
+.cred-items{justify-content:center}
+.cred-photo{width:120px}
+.cred-photo img{width:120px;height:150px}
+.help-grid{grid-template-columns:1fr}
+.mobile-sticky-cta{display:block}
+.btn{padding:12px 24px;font-size:.9rem}
+.site-header{padding:12px 0}
+section{padding:60px 0 !important}
+}
+@media(prefers-reduced-motion:reduce){
+.reveal{opacity:1;transform:none;transition:none}
+.testimonial-card:hover,.help-card:hover{transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header" id="site-header">
+<div class="container header-inner">
+<a href="#" class="header-logo"><img src="assets/images/logo.png" alt="Vic Pipke's Financial Warriors"></a>
+<div class="header-cta">
+<a href="#book" class="btn btn-primary">Book a Short Chat</a>
+</div>
+</div>
+</header>
+
+<!-- 1. HERO -->
+<section class="hero" id="hero">
+<div class="container">
+<div class="hero-content">
+<h1 class="reveal">Financial guidance for Canadian families who want <span>clarity and confidence</span></h1>
+<p class="hero-sub reveal stagger-1">Start with a trusted conversation about your financial future. I help Canadians understand their options, make informed decisions, and move forward with more clarity, confidence, and peace of mind.</p>
+<p class="hero-micro reveal stagger-2">Simple. Personal. No pressure.</p>
+</div>
+</div>
+</section>
+
+<!-- 2. TRUST STRIP -->
+<section class="trust-strip" id="trust">
+<div class="container">
+<div class="trust-header reveal">
+<h2>Trusted by people who want clarity, care, and real support</h2>
+</div>
+<div class="testimonial-grid">
+<div class="testimonial-card reveal stagger-1">
+<div class="stars">
+<svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L17.82 6.7l-3.91 3.81.92 5.39L10 13.42l-4.83 2.48.92-5.39L2.18 6.7l5.43-.86z"/></svg>
+<svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L17.82 6.7l-3.91 3.81.92 5.39L10 13.42l-4.83 2.48.92-5.39L2.18 6.7l5.43-.86z"/></svg>
+<svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L17.82 6.7l-3.91 3.81.92 5.39L10 13.42l-4.83 2.48.92-5.39L2.18 6.7l5.43-.86z"/></svg>
+<svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L17.82 6.7l-3.91 3.81.92 5.39L10 13.42l-4.83 2.48.92-5.39L2.18 6.7l5.43-.86z"/></svg>
+<svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L17.82 6.7l-3.91 3.81.92 5.39L10 13.42l-4.83 2.48.92-5.39L2.18 6.7l5.43-.86z"/></svg>
+</div>
+<blockquote>"Vic has been nothing short of amazing for me and my family's current and future finicial success. Finally someone who pointed me in the right direction and was able to take the time and patience to work through each individual issue that had been weighing me down. There is no one else I would recommend."</blockquote>
+<div class="testimonial-author">
+<div class="author-avatar">JB</div>
+<div class="author-info">
+<strong>Joshua Brochu</strong>
+<span>Edmonton</span>
+</div>
+</div>
+</div>
+<div class="testimonial-card reveal stagger-2">
+<div class="stars">
+<svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L17.82 6.7l-3.91 3.81.92 5.39L10 13.42l-4.83 2.48.92-5.39L2.18 6.7l5.43-.86z"/></svg>
+<svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L17.82 6.7l-3.91 3.81.92 5.39L10 13.42l-4.83 2.48.92-5.39L2.18 6.7l5.43-.86z"/></svg>
+<svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L17.82 6.7l-3.91 3.81.92 5.39L10 13.42l-4.83 2.48.92-5.39L2.18 6.7l5.43-.86z"/></svg>
+<svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L17.82 6.7l-3.91 3.81.92 5.39L10 13.42l-4.83 2.48.92-5.39L2.18 6.7l5.43-.86z"/></svg>
+<svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L17.82 6.7l-3.91 3.81.92 5.39L10 13.42l-4.83 2.48.92-5.39L2.18 6.7l5.43-.86z"/></svg>
+</div>
+<blockquote>"Vic has been great at keeping me informed, and helping me make good decisions on my investments. But best of all he will take the time you need to help you anytime you need it. Great person with a high standard of quality service."</blockquote>
+<div class="testimonial-author">
+<div class="author-avatar">KZ</div>
+<div class="author-info">
+<strong>Kathy Zaychuk</strong>
+<span>Sherwood Park</span>
+</div>
+</div>
+</div>
+</div>
+<div class="trust-cta reveal">
+<a href="#book" class="btn btn-primary">Schedule a Clarity Call</a>
+</div>
+</div>
+</section>
+
+<!-- 3. FINANCIAL CLARITY CHAT -->
+<section class="clarity-section" id="clarity">
+<div class="container clarity-inner">
+<div class="clarity-text reveal">
+<h2>What is a Financial Clarity Chat?</h2>
+<p>A short, no-pressure conversation to help you understand where you are, what questions you have, and what your next step could look like.</p>
+<ul class="clarity-bullets">
+<li>Ask questions openly</li>
+<li>Get clear on your options</li>
+<li>Leave with more confidence</li>
+<li>Decide if it feels like a fit</li>
+</ul>
+<a href="#book" class="btn btn-primary">Book a Call</a>
+</div>
+<div class="clarity-visual reveal stagger-1">
+<div class="chat-icon">
+<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+</div>
+<h3>Financial Clarity Chat</h3>
+<p>Simple. Personal. No pressure.</p>
+</div>
+</div>
+</section>
+
+<!-- 4. STORY -->
+<section class="story-section" id="story">
+<div class="container">
+<div class="story-inner reveal">
+<div class="story-text">
+<h2>A new way to keep serving people</h2>
+<p>For nearly 30 years, my life was built around service. I spent 21 years with the Edmonton Police Service and 12 years on Tactical Team. Then a life-threatening injury forced me to leave the career I loved and find a new way to keep helping people.</p>
+<p>That path led me to financial services.</p>
+<p>Today, I bring the same values that shaped my years in law enforcement into every conversation: service, integrity, leadership, and honest guidance. My goal is to help people make informed decisions and become active participants in their own plan.</p>
+
+</div>
+<div class="story-photo">
+<img src="assets/images/Vicpic.png" alt="Vic Pipke">
+</div>
+</div>
+</div>
+</section>
+
+<!-- 5. CREDIBILITY STRIP -->
+<section class="credibility-strip" id="credibility">
+<div class="container">
+<div class="cred-inner reveal">
+
+<div class="cred-items">
+<div class="cred-item"><span class="cred-dot"></span>21 years with Edmonton Police Service</div>
+<div class="cred-item"><span class="cred-dot"></span>12 years on Tactical Team</div>
+<div class="cred-item"><span class="cred-dot"></span>Former crisis negotiator</div>
+<div class="cred-item"><span class="cred-dot"></span>Education-first approach</div>
+<div class="cred-item"><span class="cred-dot"></span>Independent guidance</div>
+</div>
+<p class="cred-text">All of this experience has made me the man I am to help you finally reach your financial freedom and clarity!</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- 6. VIDEO -->
+<section class="video-section" id="video">
+<div class="container">
+<div class="video-inner reveal">
+<h2>Why this work matters to me</h2>
+<p>If you would like to know a little more about my story and the heart behind Financial Warriors, watch this short video.</p>
+<div class="video-wrap">
+<iframe src="https://player.vimeo.com/video/500239601?h=0&title=0&byline=0&portrait=0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Vic Pipke - Financial Warriors"></iframe>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- 7. HOW I HELP -->
+<section class="help-section" id="help">
+<div class="container">
+<div class="help-header reveal">
+<h2>How I help</h2>
+<p>I am an independent financial services broker, which means the conversation is not tied to one company or one set of products. My role is to help you understand your options, look at the bigger picture, and find what fits your goals best.</p>
+</div>
+<div class="help-grid">
+<div class="help-card reveal stagger-1">
+<div class="card-icon">
+<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+</div>
+<h3>Protect what matters most</h3>
+<p>Explore strategies that help protect your family, your future, and what you have worked hard to build.</p>
+</div>
+<div class="help-card reveal stagger-2">
+<div class="card-icon">
+<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+</div>
+<h3>Create more clarity</h3>
+<p>Understand your options so you can make decisions with more confidence.</p>
+</div>
+<div class="help-card reveal stagger-3">
+<div class="card-icon">
+<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+</div>
+<h3>See the bigger picture</h3>
+<p>Look at the parts of your financial life together, not in isolation.</p>
+</div>
+<div class="help-card reveal stagger-4">
+<div class="card-icon">
+<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+</div>
+<h3>Have a real conversation</h3>
+<p>Get guidance that is grounded, educational, and personal.</p>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- 8. BUILD PEOPLE FIRST -->
+<section class="build-section" id="build">
+<div class="container">
+<div class="build-inner reveal">
+<h2>Build people first</h2>
+<p>One belief guides the way I work: build people first.</p>
+<p>When people feel informed, respected, and supported, they make stronger decisions. That is the mindset I bring into every conversation.</p>
+
+</div>
+</div>
+</section>
+
+<!-- 9. PERSONAL INVITATION -->
+<section class="invite-section" id="invite">
+<div class="container">
+<div class="invite-inner reveal">
+<h2>Let's start with a conversation</h2>
+<p>You do not need to have everything figured out before reaching out. You just need a place to start.</p>
+<p>If you are looking for more clarity around your financial future, I would be honored to speak with you.</p>
+
+</div>
+</div>
+</section>
+
+<!-- 10. FINAL CTA -->
+<section class="final-section" id="book">
+<div class="final-inner">
+<h2>Take the next step with more clarity and confidence</h2>
+<p>Book a short conversation and let's talk about where you are, where you want to go, and what may make sense for your next step.</p>
+<a href="#book" class="btn btn-primary">Financial Goals Chat</a>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+<div class="container">
+<p>&copy; 2026 Vic Pipke's Financial Warriors. All rights reserved.</p>
+</div>
+</footer>
+
+
+
+<script>
+// Sticky header
+const header = document.getElementById('site-header');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  if (y > 60) { header.classList.add('scrolled'); } else { header.classList.remove('scrolled'); }
+}, { passive: true });
+
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(el => observer.observe(el));
+
+// Smooth scroll for anchors
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+</body>
+</html>
