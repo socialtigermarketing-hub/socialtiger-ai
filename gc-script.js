@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    GRAHAME CUNNINGHAM PAINTER & DECORATOR
    Premium Heritage Website â€” JavaScript
    ============================================================ */
@@ -366,7 +366,7 @@
     if (imageEl) imageEl.style.backgroundImage = 'url(' + project.image + ')';
     if (titleEl) titleEl.textContent = project.title;
     if (categoryEl) categoryEl.textContent = project.category;
-    if (locationEl) locationEl.innerHTML = 'ðŸ“ ' + project.location;
+    if (locationEl) locationEl.innerHTML = project.location;
     if (descEl) descEl.textContent = project.description;
   }
 
@@ -440,9 +440,9 @@
       fileInput.addEventListener('change', function () {
         var count = fileInput.files.length;
         if (count > 0) {
-          fileLabel.innerHTML = 'ðŸ“Ž ' + count + ' file' + (count > 1 ? 's' : '') + ' selected';
+          fileLabel.innerHTML = count + ' file' + (count > 1 ? 's' : '') + ' selected';
         } else {
-          fileLabel.innerHTML = 'ðŸ“· Click to upload project photos (optional)';
+          fileLabel.innerHTML = 'Click to upload project photos (optional)';
         }
       });
     }
