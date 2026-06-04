@@ -1861,14 +1861,30 @@ p {
 
   .gc-hero {
     min-height: 90vh;
+    overflow: hidden;
+  }
+
+  .gc-hero__content {
+    padding: 0 1.2rem;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .gc-hero__title {
+    font-size: 2rem;
+    line-height: 1.2;
   }
 
   .gc-hero__established {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
   }
 
   .gc-hero__subtitle {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
+    line-height: 1.7;
   }
 
   .gc-hero__buttons {
