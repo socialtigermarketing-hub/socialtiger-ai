@@ -1,5 +1,171 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- COOKIE CONSENT AND THIRD-PARTY CONTENT ---
+    const CONSENT_KEY = 'socialTigerConsent';
+    const CONSENT_DURATION = 180 * 24 * 60 * 60 * 1000;
+    let trackingLoaded = false;
+
+    function readConsent() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(CONSENT_KEY));
+            if (!saved || !saved.choice || !saved.expiresAt) return null;
+            if (Date.now() >= saved.expiresAt) {
+                localStorage.removeItem(CONSENT_KEY);
+                return null;
+            }
+            return saved.choice;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function saveConsent(choice) {
+        try {
+            localStorage.setItem(CONSENT_KEY, JSON.stringify({
+                choice,
+                expiresAt: Date.now() + CONSENT_DURATION
+            }));
+        } catch (error) {
+            console.warn('Unable to save cookie preference.');
+        }
+    }
+
+    function loadGoogleAnalytics() {
+        if (document.querySelector('script[data-social-tiger-analytics]')) return;
+
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () {
+            window.dataLayer.push(arguments);
+        };
+        window.gtag('js', new Date());
+        window.gtag('config', 'G-3MRHMFE947');
+
+        const analyticsScript = document.createElement('script');
+        analyticsScript.async = true;
+        analyticsScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-3MRHMFE947';
+        analyticsScript.dataset.socialTigerAnalytics = 'true';
+        document.head.appendChild(analyticsScript);
+    }
+
+    function loadLeadsy() {
+        if (document.body.dataset.leadsyEnabled !== 'true' || document.getElementById('vtag-ai-js')) return;
+
+        const leadsyScript = document.createElement('script');
+        leadsyScript.id = 'vtag-ai-js';
+        leadsyScript.async = true;
+        leadsyScript.src = 'https://r2.leadsy.ai/tag.js?pid=15ytFNTGt43D1d3r0&version=062024';
+        document.head.appendChild(leadsyScript);
+    }
+
+    function activateVideo(iframe) {
+        if (!iframe || iframe.src || !iframe.dataset.consentSrc) return;
+
+        iframe.src = iframe.dataset.consentSrc;
+        iframe.hidden = false;
+        const placeholder = iframe.parentElement.querySelector('.video-consent-placeholder');
+        if (placeholder) placeholder.remove();
+    }
+
+    function activateAllVideos() {
+        document.querySelectorAll('iframe[data-consent-src]').forEach(activateVideo);
+    }
+
+    function prepareVideoPlaceholders() {
+        document.querySelectorAll('iframe[data-consent-src]').forEach(iframe => {
+            if (iframe.src || iframe.parentElement.querySelector('.video-consent-placeholder')) return;
+
+            iframe.hidden = true;
+            const placeholder = document.createElement('div');
+            placeholder.className = 'video-consent-placeholder';
+            placeholder.innerHTML = `
+                <p>This video is hosted by YouTube.</p>
+                <button type="button" class="btn btn-outline">Load video</button>
+                <small>Loading it may allow YouTube to receive usage data.</small>
+            `;
+            placeholder.querySelector('button').addEventListener('click', () => activateVideo(iframe));
+            iframe.parentElement.insertBefore(placeholder, iframe);
+        });
+    }
+
+    function enableNonEssentialContent() {
+        if (!trackingLoaded) {
+            loadGoogleAnalytics();
+            loadLeadsy();
+            trackingLoaded = true;
+        }
+        activateAllVideos();
+    }
+
+    const consentPanel = document.createElement('section');
+    consentPanel.id = 'st-privacy-panel';
+    consentPanel.className = 'st-privacy-banner';
+    consentPanel.setAttribute('role', 'dialog');
+    consentPanel.setAttribute('aria-modal', 'false');
+    consentPanel.setAttribute('aria-labelledby', 'st-privacy-title');
+    consentPanel.innerHTML = `
+        <div class="st-privacy-banner__content">
+            <div class="st-privacy-banner__copy">
+                <h2 id="st-privacy-title">Your privacy choices</h2>
+                <p>We use optional analytics and third-party media to understand website use and improve our marketing. You can accept or reject non-essential tracking. The website works either way.</p>
+            </div>
+            <div class="st-privacy-banner__actions">
+                <button type="button" class="st-privacy-banner__button" data-consent-choice="reject">Reject non-essential</button>
+                <button type="button" class="st-privacy-banner__button" data-consent-choice="accept">Accept all</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(consentPanel);
+
+    function showConsentPanel() {
+        consentPanel.hidden = false;
+        // Force reflow to ensure CSS transition plays correctly
+        void consentPanel.offsetWidth;
+        consentPanel.classList.add('is-visible');
+    }
+
+    function hideConsentPanel() {
+        consentPanel.classList.remove('is-visible');
+        window.setTimeout(() => {
+            consentPanel.hidden = true;
+        }, 350);
+    }
+
+    consentPanel.querySelectorAll('[data-consent-choice]').forEach(button => {
+        button.addEventListener('click', () => {
+            const choice = button.dataset.consentChoice;
+            const shouldReload = choice === 'reject' && trackingLoaded;
+            saveConsent(choice);
+
+            if (choice === 'accept') enableNonEssentialContent();
+            hideConsentPanel();
+
+            if (shouldReload) window.location.reload();
+        });
+    });
+
+    document.querySelectorAll('.cookie-settings-link').forEach(link => {
+        link.addEventListener('click', event => {
+            event.preventDefault();
+            showConsentPanel();
+            consentPanel.querySelector('[data-consent-choice="reject"]').focus();
+        });
+    });
+
+    prepareVideoPlaceholders();
+    
+    // DEBUG: Temporarily clear your saved choice so it ALWAYS pops up on reload
+    localStorage.removeItem(CONSENT_KEY);
+    
+    const savedConsent = readConsent();
+    if (savedConsent === 'accept') {
+        enableNonEssentialContent();
+        consentPanel.hidden = true;
+    } else if (savedConsent === 'reject') {
+        consentPanel.hidden = true;
+    } else {
+        setTimeout(showConsentPanel, 100);
+    }
+
     // --- PRIVACY POLICY LOGIC ---
     const privacyLink = document.getElementById('privacy-policy-link');
     if (privacyLink) {
@@ -87,7 +253,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             <br>
 
                             <h2>8. Who we share data with</h2>
-                            <p>We may share data with trusted service providers (e.g. CRM, email or analytics tools) strictly for business operations.</p>
+                            <p>With your consent, we use Google Analytics to understand website usage and Leadsy to support lead generation and marketing analysis. Embedded videos are supplied by YouTube using its privacy-enhanced domain.</p>
+                            <p>These providers may receive technical information such as your IP address, browser details and interactions with their services. Optional services remain blocked until you accept non-essential tracking or deliberately load an individual video.</p>
+                            <p>Your website preference is stored in your browser for six months. You can change or withdraw it at any time using the Cookie settings link in the footer.</p>
                             <p>We never sell personal data.</p>
                             <br>
 
