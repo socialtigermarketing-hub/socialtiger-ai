@@ -120,7 +120,7 @@ p { font-size: 1.125rem; color: var(--charcoal); }
 .logo-img-link { display: inline-block; transition: var(--transition); }
 .logo-img-link:hover { transform: translateY(-1px); filter: drop-shadow(0 0 10px rgba(212,175,55,0.4)); }
 .nav-logo { height: 55px; width: auto; display: block; object-fit: contain; }
-@media (max-width: 768px) { .nav-logo { height: 32px; } }
+@media (max-width: 768px) { .nav-logo { height: 42px; } }
 
 .nav-links { display: flex; gap: 40px; align-items: center; list-style: none; margin: 0; padding: 0; }
 .nav-links li a {
@@ -184,56 +184,70 @@ p { font-size: 1.125rem; color: var(--charcoal); }
   .menu-toggle { display: flex; }
 }
 
-/* 1. Hero Section */
+/* 1. Hero Section (Ultimate Premium Portrait Restructure) */
 .hero {
-  position: relative; min-height: 100vh; display: flex; align-items: center;
-  background: var(--navy-dark); overflow: hidden; padding-top: 100px;
+  background: var(--navy-dark);
+  position: relative;
+  overflow: hidden;
+  padding-top: 120px;
 }
-.hero-bg {
-  position: absolute; inset: 0; z-index: 1;
+.hero-ambient-depth {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle at 70% 30%, rgba(10,17,40,0) 0%, rgba(5,8,20,1) 100%);
+  z-index: 0;
 }
-.hero-bg img {
-  width: 100%; height: 100%; object-fit: cover; object-position: right center;
-  opacity: 0.6; mix-blend-mode: luminosity;
+.hero-ambient-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle at 40% 60%, rgba(212,175,55,.05) 0%, transparent 60%);
+  z-index: 0;
 }
-.hero-overlay {
-  position: absolute; inset: 0; z-index: 1;
-  background: linear-gradient(90deg, rgba(10,17,40,0.85) 0%, rgba(10,17,40,0.4) 40%, rgba(10,17,40,0.1) 100%);
+.hero-noise {
+  position: absolute; inset: 0; pointer-events: none; opacity: .03; mix-blend-mode: overlay;
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjgiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmZmIi8+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI24pIiBvcGFjaXR5PSIwLjI1Ii8+PC9zdmc+');
+  z-index: 0;
 }
-.hero-glow {
-  position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(212,175,55,0.15) 0%, transparent 70%);
-  top: 50%; left: 30%; transform: translate(-50%, -50%); z-index: 1; border-radius: 50%; pointer-events: none;
+
+.hero-split {
+  position: relative; z-index: 2; display: grid;
+  grid-template-columns: 1.35fr 0.85fr; align-items: center; gap: 60px;
 }
 .hero-content {
-  position: relative; z-index: 2; max-width: 700px; padding: 40px 0;
+  position: relative; z-index: 3; padding: 40px 0; max-width: 800px;
 }
 .hero h1 { color: var(--white); margin-bottom: 24px; text-shadow: 0 4px 12px rgba(0,0,0,0.3); }
 .hero-sub { color: var(--text-muted); font-size: 1.25rem; margin-bottom: 40px; max-width: 540px; }
 .hero-proof { margin-bottom: 40px; border-left: 3px solid var(--gold); padding-left: 20px; }
 .hero-proof strong { display: block; color: var(--gold); font-family: 'Outfit', sans-serif; font-size: 1.3rem; margin-bottom: 4px; }
 .hero-proof p { color: var(--white); font-size: 1rem; margin: 0; }
-.hero-ctas { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
 
-/* Floating Cards in Hero */
-.hero-floating-cards {
-  position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
-  display: flex; flex-direction: column; gap: 24px; z-index: 3;
+.proof-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px;
 }
-.float-card {
+.proof-card {
   background: rgba(10, 17, 40, 0.6); backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border); border-radius: var(--radius-md);
-  padding: 20px 24px; width: 280px; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-  transform: translateX(50px); opacity: 0; animation: slideInFloat 1s forwards cubic-bezier(0.25, 1, 0.5, 1);
+  padding: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  transform: translateY(20px); opacity: 0; animation: slideUpFloat 1s forwards cubic-bezier(0.25, 1, 0.5, 1);
 }
-.float-card:nth-child(1) { animation-delay: 0.5s; }
-.float-card:nth-child(2) { animation-delay: 0.7s; }
-.float-card:nth-child(3) { animation-delay: 0.9s; }
-.float-card h4 { color: var(--gold); font-size: 1.5rem; margin-bottom: 4px; }
-.float-card p { color: var(--white); font-size: 0.9rem; margin: 0; line-height: 1.4; }
+.proof-card:nth-child(1) { animation-delay: 0.2s; }
+.proof-card:nth-child(2) { animation-delay: 0.4s; }
+.proof-card:nth-child(3) { animation-delay: 0.6s; }
+.proof-card h4 { color: var(--gold); font-size: 1.3rem; margin-bottom: 4px; }
+.proof-card p { color: var(--white); font-size: 0.85rem; margin: 0; line-height: 1.4; }
 
-@keyframes slideInFloat {
-  to { transform: translateX(0); opacity: 1; }
+.hero-ctas { margin-top: 20px; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+
+.hero-image-wrapper {
+  min-height: 650px; height: 88%; display: flex; align-items: flex-end; justify-content: center;
+  position: relative; z-index: 2;
 }
+.hero-image-wrapper img {
+  width: min(100%, 650px); height: auto; max-height: 100%;
+  object-fit: contain; object-position: center bottom; display: block;
+  image-rendering: auto; backface-visibility: hidden; transform: translateZ(0);
+}
+
+@keyframes slideUpFloat { to { transform: translateY(0); opacity: 1; } }
 
 /* 2. Trust Ribbon */
 .trust-ribbon {
@@ -520,31 +534,30 @@ footer p { color: var(--text-muted); font-size: 0.9rem; }
 }
 
 @media (max-width: 768px) {
-  .site-header { padding: 12px 20px; width: 95%; min-height: 58px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-  .site-header.scrolled { padding: 12px 20px; }
-  .menu-toggle { padding: 0; display: flex; justify-content: center; align-items: center; }
+  .site-header { padding: 8px 20px; width: 95%; height: 58px; min-height: 58px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .site-header.scrolled { padding: 8px 20px; }
+  .menu-toggle { padding: 0; display: flex; justify-content: center; align-items: center; height: 100%; }
   .nav-cta { display: none; } /* Simplified for mobile, sticky CTA handles conversion */
   
-  .hero { padding-top: 100px; text-align: center; min-height: 85vh; align-items: flex-start; }
-  .hero-bg img { object-position: 75% center; }
-  .hero-overlay { background: linear-gradient(180deg, rgba(10,17,40,0.3) 0%, rgba(10,17,40,0.85) 100%); }
+  .hero { padding-top: 80px; text-align: left; }
+  .hero-split { display: flex; flex-direction: column; gap: 0; }
   
-  .hero-content { margin-top: 20px; padding-bottom: 0; }
-  .hero h1 { margin-bottom: 24px; font-size: 2.2rem; }
-  .hero-sub { margin-bottom: 40px; }
-  .hero-proof { margin-bottom: 40px; border-left: none; padding-left: 0; border-top: 2px solid var(--gold); padding-top: 20px; display: inline-block; }
-  .hero-ctas { justify-content: center; margin-bottom: 48px; gap: 20px; }
+  .hero-image-wrapper { 
+    order: -1; height: 35vh; min-height: 300px; margin-bottom: 24px; 
+    display: flex; align-items: center; justify-content: center; 
+  }
+  .hero-image-wrapper img { width: 100%; height: 100%; object-fit: contain; object-position: center bottom; }
   
-  .hero-floating-cards { 
-    position: relative; right: auto; top: auto; transform: none;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
-    margin-top: 0; align-items: stretch; justify-items: center; width: 100%;
-  }
-  .float-card { 
-    width: 100%; padding: 20px 16px; margin: 0; transform: translateY(30px); 
-    animation: slideUpFloat 1s forwards cubic-bezier(0.25, 1, 0.5, 1); 
-  }
-  .float-card:last-child { grid-column: 1 / -1; }
+  .hero-content { margin-top: 0; padding-bottom: 0; padding-top: 0; max-width: 100%; }
+  .hero h1 { margin-bottom: 16px; font-size: clamp(2.6rem,8vw,4rem); line-height: 1.05; letter-spacing: -0.03em; }
+  .hero-sub { margin-bottom: 24px; }
+  .hero-proof { margin-bottom: 24px; border-left: none; padding-left: 0; border-top: 2px solid var(--gold); padding-top: 16px; display: inline-block; }
+  
+  .proof-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0; }
+  .proof-card { padding: 12px; border-radius: 18px; min-height: auto; width: 100%; margin: 0; transform: translateY(20px); }
+  .proof-card:last-child { grid-column: 1 / -1; }
+  
+  .hero-ctas { justify-content: flex-start; margin-top: 20px; margin-bottom: 48px; gap: 16px; }
   
   .authority-grid { grid-template-columns: 1fr; gap: 30px; }
   .authority-item::after { display: none; }
@@ -585,7 +598,7 @@ footer p { color: var(--text-muted); font-size: 0.9rem; }
     <li><a href="#story" data-scroll="story">ABOUT</a></li>
   </ul>
   <div class="nav-cta-wrapper">
-    <a href="#book" class="nav-cta magnetic-btn">Book A Strategic Review</a>
+    <a href="https://calendly.com/vp--22/qualifying-call" target="_blank" class="nav-cta magnetic-btn">Book A Strategic Review</a>
   </div>
   <div class="menu-toggle" id="menuToggle">
     <span></span>
@@ -601,18 +614,17 @@ footer p { color: var(--text-muted); font-size: 0.9rem; }
     <li><a href="#framework" class="mobile-link">OUR FRAMEWORK</a></li>
     <li><a href="#story" class="mobile-link">ABOUT</a></li>
   </ul>
-  <a href="#book" class="nav-cta mobile-link magnetic-btn">Book A Strategic Review</a>
+  <a href="https://calendly.com/vp--22/qualifying-call" target="_blank" class="nav-cta mobile-link magnetic-btn">Book A Strategic Review</a>
 </div>
 
 <!-- 1. Hero -->
-<section class="hero">
-  <div class="hero-bg">
-    <img src="assets/images/hero-vic.jpg" alt="Vic Pipke Strategic Advisor">
-  </div>
-  <div class="hero-overlay"></div>
-  <div class="hero-glow"></div>
-  
-  <div class="container" style="display: flex; justify-content: space-between; position: relative;">
+<section class="hero" id="home">
+  <!-- Premium Ambient Layers -->
+  <div class="hero-ambient-depth"></div>
+  <div class="hero-ambient-glow"></div>
+  <div class="hero-noise"></div>
+
+  <div class="container hero-split">
     <div class="hero-content">
       <h1 class="reveal">What Opportunities Might Exist Within Your Business?</h1>
       <p class="hero-sub reveal stagger-1">Most business owners don't discover the problem until it's too late. We help you uncover blind spots and optimize your financial structure.</p>
@@ -622,25 +634,31 @@ footer p { color: var(--text-muted); font-size: 0.9rem; }
         <p>In Potential Future Taxes Saved For One Business Owner</p>
       </div>
 
+      <div class="proof-grid">
+        <div class="proof-card">
+          <h4>$6.5M+</h4>
+          <p>Potential Future Taxes Saved</p>
+        </div>
+        <div class="proof-card">
+          <h4>30+ Years</h4>
+          <p>Of Leadership</p>
+        </div>
+        <div class="proof-card">
+          <h4>Former SWAT</h4>
+          <p>Team Leader</p>
+        </div>
+      </div>
+
       <div class="hero-ctas reveal stagger-3">
-        <a href="#book" class="btn btn-primary">Book A Strategic Review</a>
+        <a href="https://calendly.com/vp--22/qualifying-call" target="_blank" class="btn btn-primary">Book A Strategic Review</a>
         <a href="#story" class="btn btn-secondary">Watch Vic's Story</a>
       </div>
     </div>
 
-    <div class="hero-floating-cards">
-      <div class="float-card">
-        <h4>$6.5M+</h4>
-        <p>Potential Future Taxes Saved</p>
-      </div>
-      <div class="float-card">
-        <h4>30+ Years</h4>
-        <p>Protecting What Matters Most</p>
-      </div>
-      <div class="float-card">
-        <h4>Former SWAT Leader</h4>
-        <p>Strategic Planning Mindset</p>
-      </div>
+    <div class="hero-image-wrapper">
+      <picture>
+        <img src="assets/images/hero-vic.jpg" alt="Vic Pipke Strategic Advisor" loading="eager" fetchpriority="high" decoding="async">
+      </picture>
     </div>
   </div>
 </section>
@@ -710,7 +728,7 @@ footer p { color: var(--text-muted); font-size: 0.9rem; }
     </div>
 
     <div class="results-cta-wrapper reveal">
-      <a href="#book" class="btn btn-primary">Schedule A Strategic Review</a>
+      <a href="https://calendly.com/vp--22/qualifying-call" target="_blank" class="btn btn-primary">Schedule A Strategic Review</a>
     </div>
   </div>
 </section>
@@ -871,7 +889,7 @@ footer p { color: var(--text-muted); font-size: 0.9rem; }
       </ul>
 
       <div class="ass-cta">
-        <a href="#book" class="btn btn-primary">Book A Strategic Review</a>
+        <a href="https://calendly.com/vp--22/qualifying-call" target="_blank" class="btn btn-primary">Book A Strategic Review</a>
       </div>
     </div>
   </div>
@@ -938,7 +956,7 @@ footer p { color: var(--text-muted); font-size: 0.9rem; }
       </div>
       
       <div>
-        <a href="mailto:vic@financialwarriors.ca" class="btn btn-primary">Book A Strategic Review</a>
+        <a href="https://calendly.com/vp--22/qualifying-call" target="_blank" class="btn btn-primary">Book A Strategic Review</a>
       </div>
       <p style="color: var(--text-muted); margin-top: 24px; font-size: 0.9rem;">No Pressure. No Obligation. Just A Conversation.</p>
     </div>
@@ -952,7 +970,7 @@ footer p { color: var(--text-muted); font-size: 0.9rem; }
 </footer>
 
 <div class="mobile-sticky-cta">
-  <a href="#book" class="btn btn-primary">Book A Strategic Review</a>
+  <a href="https://calendly.com/vp--22/qualifying-call" target="_blank" class="btn btn-primary">Book A Strategic Review</a>
 </div>
 
 <script>
