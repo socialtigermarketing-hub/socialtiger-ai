@@ -5,24 +5,20 @@
     --color-primary: #FFA500;
     --color-primary-dark: #cc8400;
     --color-bg: #000000;
-    --color-bg-alt: #0a0a0a;
     --color-bg-card: #141414;
+    --color-bg-alt: #0a0a0a;
     --color-text: #ffffff;
     --color-text-muted: #a3a3a3;
     --color-border: #333333;
-
     --font-main: 'Inter', system-ui, -apple-system, sans-serif;
-
     --spacing-xs: 0.5rem;
     --spacing-sm: 1rem;
     --spacing-md: 2rem;
     --spacing-lg: 4rem;
-    --spacing-xl: 6rem;
-
-    --border-radius: 12px;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
+    --spacing-xl: 8rem;
     --container-width: 1200px;
+    --border-radius: 12px;
+    --transition: all 0.3s ease;
 }
 
 * {
@@ -46,7 +42,6 @@ body {
 a {
     text-decoration: none;
     color: inherit;
-    transition: var(--transition);
 }
 
 ul {
@@ -70,6 +65,10 @@ h4 {
     margin-bottom: var(--spacing-sm);
     text-wrap: balance;
 }
+
+h1 { font-size: clamp(2.25rem, 1.5rem + 3.5vw, 4rem); }
+h2 { font-size: clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem); }
+h3 { font-size: clamp(1.25rem, 1rem + 1.25vw, 1.75rem); }
 
 .text-primary {
     color: var(--color-primary);
@@ -128,6 +127,7 @@ h4 {
     cursor: pointer;
     border: 2px solid transparent;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: #ffffff;
     transition: transform 0.2s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -137,7 +137,7 @@ h4 {
 
 .btn-primary {
     background-color: var(--color-primary);
-    color: var(--color-bg);
+    color: #ffffff;
 }
 
 .btn-primary:hover {
@@ -147,12 +147,12 @@ h4 {
 .btn-outline {
     background-color: transparent;
     border-color: var(--color-primary);
-    color: var(--color-primary);
+    color: #ffffff;
 }
 
 .btn-outline:hover {
     background-color: var(--color-primary);
-    color: var(--color-bg);
+    color: #ffffff;
 }
 
 .btn-lg {
@@ -860,6 +860,7 @@ h4 {
     align-items: center;
     justify-content: center;
     font-size: 24px;
+    color: #ffffff;
     transition: transform 0.2s;
 }
 
@@ -1258,3 +1259,5 @@ body.privacy-active .mobile-menu-btn {
         transition: none;
     }
 }
+
+/* =========================================

@@ -57,43 +57,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.head.appendChild(leadsyScript);
     }
 
-    function activateVideo(iframe) {
-        if (!iframe || iframe.src || !iframe.dataset.consentSrc) return;
-
-        iframe.src = iframe.dataset.consentSrc;
-        iframe.hidden = false;
-        const placeholder = iframe.parentElement.querySelector('.video-consent-placeholder');
-        if (placeholder) placeholder.remove();
-    }
-
-    function activateAllVideos() {
-        document.querySelectorAll('iframe[data-consent-src]').forEach(activateVideo);
-    }
-
-    function prepareVideoPlaceholders() {
-        document.querySelectorAll('iframe[data-consent-src]').forEach(iframe => {
-            if (iframe.src || iframe.parentElement.querySelector('.video-consent-placeholder')) return;
-
-            iframe.hidden = true;
-            const placeholder = document.createElement('div');
-            placeholder.className = 'video-consent-placeholder';
-            placeholder.innerHTML = `
-                <p>This video is hosted by YouTube.</p>
-                <button type="button" class="btn btn-outline">Load video</button>
-                <small>Loading it may allow YouTube to receive usage data.</small>
-            `;
-            placeholder.querySelector('button').addEventListener('click', () => activateVideo(iframe));
-            iframe.parentElement.insertBefore(placeholder, iframe);
-        });
-    }
-
     function enableNonEssentialContent() {
         if (!trackingLoaded) {
             loadGoogleAnalytics();
             loadLeadsy();
             trackingLoaded = true;
         }
-        activateAllVideos();
     }
 
     const consentPanel = document.createElement('section');
@@ -151,18 +120,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    prepareVideoPlaceholders();
-    
-    // DEBUG: Temporarily clear your saved choice so it ALWAYS pops up on reload
-    localStorage.removeItem(CONSENT_KEY);
-    
+    // Cookie Consent Display Logic
+    const BANNER_SHOWN_KEY = 'socialTigerBannerShown';
     const savedConsent = readConsent();
+
     if (savedConsent === 'accept') {
         enableNonEssentialContent();
         consentPanel.hidden = true;
     } else if (savedConsent === 'reject') {
         consentPanel.hidden = true;
     } else {
+        // No choice made yet (new visit or refresh without choice)
         setTimeout(showConsentPanel, 100);
     }
 
